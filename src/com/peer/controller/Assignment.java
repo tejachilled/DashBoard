@@ -7,12 +7,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,9 +31,19 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -48,11 +63,10 @@ public class Assignment {
 	}
 
 	@RequestMapping(value="/upload",method= RequestMethod.POST)
-	protected ModelAndView upload(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
+	protected ModelAndView upload(HttpServletRequest request) throws ServletException, IOException {
+		//			file:///C:/Users/tejj/Desktop/link.html
 
-		// Check that we have a file upload request
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-
 		if (!isMultipart) {
 			ModelAndView mv = new ModelAndView("upload");	
 			mv.addObject("headermsg", "Assignment");
@@ -80,35 +94,33 @@ public class Assignment {
 			Iterator iter = items.iterator();
 			while (iter.hasNext()) {
 				FileItem item = (FileItem) iter.next();
-
 				if (!item.isFormField()) {
 					String fileName = new File(item.getName()).getName();
 					String filePath = uploadFolder + "/" + student.getUsername()+"_"+fileName;
 					System.out.println(filePath.toString());
-					student.setImagefile("C:/Users/tejj/Downloads/Ravi/q_Assign1.png");
-					if(filePath.contains(".png")||filePath.contains(".jpg")){
-						student.setImagefile(filePath);
-						
+					if(filePath.contains(".zip") ){
+						student.setZipFile(filePath);
 					}
-					if(filePath.contains(".txt") ||filePath.contains(".doc")){
-						student.setContentFile(filePath);
-					}
-					
 					File uploadedFile = new File(filePath);
 					// saves the file to upload directory
 					item.write(uploadedFile);
+				}else{
+					String link = item.getFieldName();
+					String lvalue = item.getString();
+					if(lvalue!=null){
+						student.setLink(lvalue);
+					}
 				}
-			}
-			//ArrayList
+			}		 
+			student = HTMLParser(student);
+			student = Words_Chars(student);
+			//ArrayList  
 			ArrayList<String> demo = new ArrayList<String>();
 			demo.add("Worst!");demo.add("best!");demo.add("Worst!");demo.add("best!");demo.add("Worst!");demo.add("best!");demo.add("Worst!");demo.add("best!");
 			student.setReview(demo);
-			
-			ModelAndView mv = viewAssignment(request,response);
-			//            ModelAndView mv = new ModelAndView("WelcomePage");	
-			//            mv.addObject("headermsg", "PEER REVIEW");
-			//            mv.addObject("uploadmsg", "File uploaded successfully!");
-			//            mv.addObject("student", student);
+			student = Database.UserDataUploadtoDB(student);
+			System.out.println("upload: submission date "+student.getSubmission_date());
+			ModelAndView mv = viewAssignment(request);
 			return mv;
 
 		} catch (FileUploadException ex) {
@@ -118,97 +130,105 @@ public class Assignment {
 		}
 	}
 
+	private BeanClass Words_Chars(BeanClass student) {
+		// TODO Auto-generated method stub
+		char[] chars = student.getContent().toCharArray();
+		
+		student.setCharCount(chars.length);
+		String[] wordCount = student.getContent().split(" ");
+		student.setWordCount(wordCount.length);
+		System.out.println("char count: "+chars.length+ " : word count : "+wordCount.length);
+		return student;
+	}
+
+	private BeanClass HTMLParser(BeanClass student) throws IOException {
+		// TODO Auto-generated method stub
+		//Images part
+		int images = 0;
+		Document document = Jsoup.connect(student.getLink()).get();
+		Elements media = document.select("[src]");
+		for (Element src : media) {
+			if (src.tagName().equals("img")){	
+				images++;
+				student.setImagefile(src.attr("abs:src"));
+			}
+			else
+				System.out.println("else img: "+src.attr("abs:src"));
+		}
+		student.setImagesNumber(images);
+		
+		//Text Part
+		URL lnk = new URL(student.getLink());
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = new BufferedReader(new InputStreamReader(lnk.openStream()));
+		String line;
+		while ( (line=br.readLine()) != null) {
+			sb.append(line +"\n");
+		}
+		String text = sb.toString().replaceAll("<.*?>", "\n");
+		text = text.replaceAll("\n+", "\n");
+		student.setContent(text);
+		System.out.println(">>>>>text<<<<\n "+student.getContent());
+		return student;
+	}
+
 	@RequestMapping(value="/vassignment",method= RequestMethod.POST)
-	protected ModelAndView viewAssignment(HttpServletRequest request,HttpServletResponse response) throws Exception{
+	protected ModelAndView viewAssignment(HttpServletRequest request) throws Exception{
 
 		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
 		String everything ="";
 		ModelAndView mv = new ModelAndView("viewAssignment");	
-		//System.out.println("view assignment: student.getImagefile() "+student.getImagefile());
+
 		if(student.getImagefile()!=null){
-			String encodedString = GetEncodedString(student.getImagefile());
-			mv.addObject("ImageFile", encodedString);
+			//String encodedString = GetEncodedString(student.getImagefile());
+			mv.addObject("ImageFile", student.getImagefile());
+		}else{
+			student = Database.RetrieveInfo(student);
+			mv.addObject("ImageFile", student.getImagefile());
 		}
-		System.out.println("view assignment: student.getContentFile() "+student.getContentFile());
-		if(student.getContentFile()!=null){
-			/**Method call to read the document (demonstrate some useage of POI)**/
-			//everything = readMyDocument(student.getContentFile());
-			
-			
-			File f=new File(student.getContentFile()); 
-			String filePath=f.getPath();
-			
-			BufferedReader br = new BufferedReader(new FileReader(filePath));
-		    try {
-		        StringBuilder sb = new StringBuilder();
-		        String line = br.readLine();
-		        while (line != null) {
-		            sb.append(line);
-		            sb.append(System.lineSeparator());
-		            line = br.readLine();
-		        }
-		        everything  = sb.toString();
-		        
-		    } finally {
-		        br.close();
-		    }
-			
-			
-		}
+		System.out.println("view assignment: student.getImagefile() "+student.getImagefile());
 		mv.addObject("reviewheader", "Review");
-        mv.addObject("ContentFile", everything);
+		mv.addObject("ContentFile", student.getContent());
 		mv.addObject("headermsg", "View Assignment");
-		
+		return mv;
+	}
+
+	@RequestMapping(value="/eassignment",method= RequestMethod.POST)
+	protected ModelAndView EvaluateAssignment(HttpServletRequest request) throws Exception{
+		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
+		ArrayList<BeanClass> peer = Database.GetPeerInfo(student);
+		System.out.println("EvaluateAssignment username: "+peer.get(0).getUsername());
+		ModelAndView mv = new ModelAndView("evaluate");			
+		mv.addObject("headermsg", "Peer Evaluation");
+		mv.addObject("peer", peer);
 		return mv;
 
 	}
-	private String readMyDocument(String fileName) {
-		POIFSFileSystem fs = null;
-		StringBuilder sb = new StringBuilder();
-        try {
-            fs = new POIFSFileSystem(new FileInputStream(fileName));
-            
-            HWPFDocument doc = new HWPFDocument(fs);
-            WordExtractor we = new WordExtractor(doc);
 
-            /**Get the total number of paragraphs**/
-            String[] paragraphs = we.getParagraphText();
-            System.out.println("Total Paragraphs: "+paragraphs.length);
-
-            for (int i = 0; i < paragraphs.length; i++) {
-            	System.out.println(paragraphs[i].toString());
-                sb.append(paragraphs[i].toString());
-                sb.append(System.lineSeparator());
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-		return sb.toString();
-	}
-
+	/*	
 	private String GetEncodedString(String imagefile) {
 		File file = new File(imagefile);
 		String encodedString = "";
 		try{
-		FileInputStream fis=new FileInputStream(file);
-		ByteArrayOutputStream bos=new ByteArrayOutputStream();
-		int b;
-		byte[] buffer = new byte[1024];
-		while((b=fis.read(buffer))!=-1){
-		   bos.write(buffer,0,b);
-		}
-		byte[] fileBytes=bos.toByteArray();
-		fis.close();
-		bos.close();
-		
+			FileInputStream fis=new FileInputStream(file);
+			ByteArrayOutputStream bos=new ByteArrayOutputStream();
+			int b;
+			byte[] buffer = new byte[1024];
+			while((b=fis.read(buffer))!=-1){
+				bos.write(buffer,0,b);
+			}
+			byte[] fileBytes=bos.toByteArray();
+			fis.close();
+			bos.close();
 
-		byte[] encoded=Base64.encodeBase64(fileBytes);
-		
-		encodedString = new String(encoded);
+
+			byte[] encoded=Base64.encodeBase64(fileBytes);
+
+			encodedString = new String(encoded);
 		}catch(Exception e){ e.printStackTrace();}
 		return encodedString;
 	}
+
 
 	private static void close(Closeable resource) {
 		if (resource != null) {
@@ -219,4 +239,5 @@ public class Assignment {
 			}
 		}
 	}
+	 */
 }

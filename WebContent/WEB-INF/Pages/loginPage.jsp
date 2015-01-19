@@ -10,7 +10,7 @@
 	margin-bottom: 20px;
 	border: 1px solid transparent;
 	border-radius: 4px;
-	color: #a94442;
+	color: red;
 }
 
 #msg {
@@ -32,9 +32,10 @@
 	-moz-border-radius: 2px;
 	border: 1px solid #000;
 }
-
+/*http://upload.wikimedia.org/wikipedia/commons/5/5b/Creete_background.jpg */
 body {
-background-color: #d9edf7;
+background-image: url('http://collegium.eu/posebne-ponude/wp-content/uploads/2014/04/5.jpg');
+
 	background-size: cover;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -42,18 +43,20 @@ background-color: #d9edf7;
 	margin: 0;
 	padding: 0;
 }
+h1 {color: white;}
 </style>
 </head>
 <body onload='document.loginForm.username.focus();'>
 	<h1 align="center">${headermsg}</h1>
-	<div id="error">
+	<div id="error" align="center">
 		<form:errors path="student.*"></form:errors>
+		${ErrorMsg}
 	</div>
 	<div id="login-box">
 
 		<h3>Login with Username and Password</h3>
 
-		<form name='loginForm' action="/PeerTool/WelcomePage" method="post">
+		<form name='loginForm' action="/PeerTool/validate" method="post" >
 			<table>
 				<tr>
 					<td>User:</td>

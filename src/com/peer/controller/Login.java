@@ -27,36 +27,47 @@ import com.sun.xml.internal.org.jvnet.staxex.NamespaceContextEx.Binding;
 
 @Controller
 public class Login {	
-	
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder){
 		binder.setDisallowedFields(new String[] {""});
 	}
-	
+
 	@RequestMapping(value="/login",method= RequestMethod.GET)
 	public ModelAndView LoginPage() throws Exception {
 		// TODO Auto-generated method stub 		
 		ModelAndView mv = new ModelAndView("loginPage");	
 		return mv;
 	}
-	
-	@RequestMapping(value="/WelcomePage",method= RequestMethod.POST) 
-	public ModelAndView WelcomePage(@Valid @ModelAttribute("student") BeanClass student, BindingResult result,HttpServletRequest request ) throws Exception {
-		
+	@RequestMapping(value="/validate",method= RequestMethod.POST)
+	public ModelAndView Validate(@Valid @ModelAttribute("student") BeanClass student, BindingResult result,HttpServletRequest request ) throws Exception {
+		// TODO Auto-generated method stub
+		ModelAndView mv = new ModelAndView("loginPage");
 		if(result.hasErrors()){
-			ModelAndView mv = new ModelAndView("loginPage");
 			return mv;
 		}
-		if(student!=null){
-		request.getSession().setAttribute("student",student);
+		boolean flag = Database.validate(student);
+		if(flag){
+			mv = new ModelAndView("WelcomePage");	
+			if(student!=null){
+				request.getSession().setAttribute("student",student);
+			}
+		}else{
+			mv.addObject("ErrorMsg", "Username/Password entered was incorrect!");
 		}
-		System.out.println(student.getUsername());
+		
+		return mv;
+	}
+
+	@RequestMapping(value="/WelcomePage",method= RequestMethod.POST) 
+	public ModelAndView WelcomePage(HttpServletRequest request ) throws Exception {
+		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
 		ModelAndView mv = new ModelAndView("WelcomePage");
 		mv.addObject("WelcomeMsg", student.getUsername());		
 		return mv;
 	}
 
-	
+
 	@ModelAttribute
 	public void addCommonObj(Model mv){
 		mv.addAttribute("headermsg", "PEER REVIEW");
