@@ -13,9 +13,10 @@ public class BeanClass {
 	@NotBlank(message="password cannot be blank")
 	private String password;
 	private int count;
+	private String role;
 	private int imagesNumber;
 	private String Imagefile;
-	private String Content;
+	private String content;
 	private String zipFile;
 	private String link;
 	private String assignment_name;
@@ -23,7 +24,9 @@ public class BeanClass {
 	private String submission_date;
 	private int charCount;
 	private int wordCount;
-	private String fullName;	
+	private String fullName;
+	private String fullContext;
+	private ArrayList<String> images;
 	
 	public String getAssignment_name() {
 		return assignment_name;
@@ -75,26 +78,12 @@ public class BeanClass {
 		this.review = review;
 	}
 
-
-
 	public String getImagefile() {
 		return Imagefile;
 	}
 
 	public void setImagefile(String string) {
 		Imagefile = string;
-	}
-
-	public String getContent() {
-		return Content;
-	}
-
-	public void setContent(String content) {
-		Content = content;
-	}
-
-	BeanClass(){
-		Database db = new Database();
 	}
 
 	public String getPassword() {
@@ -152,9 +141,36 @@ public class BeanClass {
 		this.fullName = fullName;
 	}
 
+	public ArrayList<String> getImages() {
+		return images;
+	}
 
-	
+	public void setImages(ArrayList<String> images) {
+		this.images = images;
+	}
 
-	
+	public String getFullContext() {
+		return fullContext;
+	}
+
+	public void setFullContext(String fullContext) {
+		this.fullContext = fullContext;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}	
 
 }

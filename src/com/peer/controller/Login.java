@@ -4,12 +4,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,11 +39,12 @@ public class Login {
 	public void initBinder(WebDataBinder binder){
 		binder.setDisallowedFields(new String[] {""});
 	}
-
+	@Value("${admin}")
+	private String role;
 	@RequestMapping(value="/login",method= RequestMethod.GET)
 	public ModelAndView LoginPage() throws Exception {
-		// TODO Auto-generated method stub 		
-		ModelAndView mv = new ModelAndView("loginPage");	
+		ModelAndView mv = new ModelAndView("loginPage");
+		System.out.println(">>>>>>role:  "+role);
 		return mv;
 	}
 	@RequestMapping(value="/validate",method= RequestMethod.POST)
@@ -46,10 +54,12 @@ public class Login {
 		if(result.hasErrors()){
 			return mv;
 		}
-		boolean flag = Database.validate(student);
-		if(flag){
-			mv = new ModelAndView("WelcomePage");	
-			if(student!=null){
+		student = Database.validate(student);
+		System.out.println("Validate user role: "+student.getRole());
+		String role = student.getRole();
+		if(role!= null ){
+			if(role.equals("admin")){
+			mv = new ModelAndView("WelcomePage");
 				request.getSession().setAttribute("student",student);
 			}
 		}else{

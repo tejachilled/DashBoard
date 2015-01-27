@@ -1,49 +1,26 @@
 package com.peer.controller;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -65,7 +42,6 @@ public class Assignment {
 	@RequestMapping(value="/upload",method= RequestMethod.POST)
 	protected ModelAndView upload(HttpServletRequest request) throws ServletException, IOException {
 		//			file:///C:/Users/tejj/Desktop/link.html
-
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		if (!isMultipart) {
 			ModelAndView mv = new ModelAndView("upload");	
@@ -133,7 +109,6 @@ public class Assignment {
 	private BeanClass Words_Chars(BeanClass student) {
 		// TODO Auto-generated method stub
 		char[] chars = student.getContent().toCharArray();
-		
 		student.setCharCount(chars.length);
 		String[] wordCount = student.getContent().split(" ");
 		student.setWordCount(wordCount.length);
@@ -146,29 +121,26 @@ public class Assignment {
 		//Images part
 		int images = 0;
 		Document document = Jsoup.connect(student.getLink()).get();
+		
 		Elements media = document.select("[src]");
+		StringBuilder img = new StringBuilder();
+		ArrayList<String> imageFiles = new ArrayList<String>();
 		for (Element src : media) {
 			if (src.tagName().equals("img")){	
 				images++;
-				student.setImagefile(src.attr("abs:src"));
+				img.append(src.attr("abs:src"));img.append(",");
+				imageFiles.add(src.attr("abs:src"));
 			}
 			else
 				System.out.println("else img: "+src.attr("abs:src"));
 		}
-		student.setImagesNumber(images);
-		
-		//Text Part
-		URL lnk = new URL(student.getLink());
-		StringBuilder sb = new StringBuilder();
-		BufferedReader br = new BufferedReader(new InputStreamReader(lnk.openStream()));
-		String line;
-		while ( (line=br.readLine()) != null) {
-			sb.append(line +"\n");
-		}
-		String text = sb.toString().replaceAll("<.*?>", "\n");
-		text = text.replaceAll("\n+", "\n");
-		student.setContent(text);
-		System.out.println(">>>>>text<<<<\n "+student.getContent());
+		student.setImages(imageFiles);
+		System.out.println("First image: "+student.getImages().get(0));
+		student.setImagefile(img.toString());
+		student.setImagesNumber(images);		
+		student.setFullContext(document.toString());
+		student = Database.GetHTMLBody(student);
+		//System.out.println(">>>>>Fulltext<<<<\n "+document.toString());
 		return student;
 	}
 
@@ -176,19 +148,13 @@ public class Assignment {
 	protected ModelAndView viewAssignment(HttpServletRequest request) throws Exception{
 
 		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
-		String everything ="";
 		ModelAndView mv = new ModelAndView("viewAssignment");	
-
-		if(student.getImagefile()!=null){
-			//String encodedString = GetEncodedString(student.getImagefile());
-			mv.addObject("ImageFile", student.getImagefile());
-		}else{
+		
+		if(student.getImagefile()==null){
 			student = Database.RetrieveInfo(student);
-			mv.addObject("ImageFile", student.getImagefile());
 		}
-		System.out.println("view assignment: student.getImagefile() "+student.getImagefile());
+		System.out.println(">>>>>text<<<<\n "+student.getContent());
 		mv.addObject("reviewheader", "Review");
-		mv.addObject("ContentFile", student.getContent());
 		mv.addObject("headermsg", "View Assignment");
 		return mv;
 	}
@@ -202,7 +168,6 @@ public class Assignment {
 		mv.addObject("headermsg", "Peer Evaluation");
 		mv.addObject("peer", peer);
 		return mv;
-
 	}
 
 	/*	

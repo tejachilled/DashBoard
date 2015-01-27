@@ -1,39 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>View Assignment</title>
 <style type="text/css" media="screen">
-body {
-	height: 100%;
-}
-
-#left_div {
-	position: relative;
-	float: left;
-	height: 100%;
-	width: 49%;
-	margin: auto;
-	text-align: center;
-	border: 1px solid #000;
-}
-
-#right_div {
-position: relative;
-	float: right;
-	height: 100%;
-	width: 49%;
-	margin: auto;
-	text-align: left;
-	border: 1px solid #000;
-}
-
-#textarea {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-}
 /* Tabbed example */
 div.tabs {
   min-height: 29em;		/* No height: can grow if :target doesn't work */
@@ -168,7 +139,33 @@ div.tabs :target {
 }
 .CSSTableGenerator tr:first-child td:last-child{
 	border-width:0px 0px 1px 1px;
-}  
+} 
+
+
+div.left_div {
+	float: left;
+	height: 100%;
+	position: relative;
+	width: 49%;
+	border: 1px solid #000;
+	min-height: 31em;
+  	
+}
+
+#right_div {
+position: relative;
+min-height: 31em;
+	float: right;
+	width: 49%;
+	height: 100%;
+	border: 1px solid #000;
+}
+
+ 
+html, body{
+	height: 100%;
+   min-height: 100%;
+}
 </style>
 </head>
 <script>
@@ -176,41 +173,44 @@ div.tabs :target {
 		var myForm = document.getElementById("form");
 		myForm.submit();
 	}
+
 </script>
-<body >
-<form action="/PeerTool/WelcomePage" method="post" >
+<body style="height: 100%;">
+	<form action="/PeerTool/WelcomePage" method="post" >
 	<h1 align="center">${headermsg} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="home.png" width="30" onclick="submit();">&nbsp;<img src="view.png" width="30">&nbsp;<img src="self.png" width="30"></h1>
-	<br />
+	<br/>
+	<div>
+		<div class="left_div" >
+			<center><b >Student Website</b></center>
+			<object type="text/html" data="${student.link}" style="width: 100%; height: 100%; min-height: 30em;"> </object>
+		</div>
+			<div id="right_div">
+	<center><b>Summary Analytics</b></center><br/>
 <div>
-	<div id="left_div">
-		<img src="${ImageFile}" align="left" width="100%" />
-	</div>
-	<div id="right_div">
-	Summary Analytics<br><br>
-<div class="example">
     <div class="tabs">
 
 <div id="tab0"> <a href="#tab0">Metadata</a>
       <div>
       Assignment1_JenniferTimm<Br><br>
       ${student.submission_date}<br><br>
-      ${student.imagesNumber}<br><br>
+      No of Images: ${student.imagesNumber}<br><br>
       ${student.charCount} characters<br><br>
       ${student.wordCount} words<br><br>
       </div>
      </div>
 
      <div id="tab2"> <a href="#tab2">Text </a>
-      <div>... 30 lines of CSS is rather a lot, and...</div>
+      <div><pre>${student.content}</pre></div>
      </div>
 
      <div id="tab3"> <a href="#tab3">Image </a>
-      <div>... that 2 should have been enough, but...</div>
+      <div><c:forEach items="${student.images}" var="img">
+		<img src="${img}" style="width: 50%; height: 50%;"/><br/></c:forEach></div>
      </div>
 
-     <div id="tab1"> <a href="#tab1">FullText</a>
-      <div>
-      ${ContentFile}
+     <div id="tab1" > <a href="#tab1">FullText</a>
+      <div style="display: block; white-space:normal;"><pre>
+     <c:out value="${student.fullContext}"/></pre>
 </div>
      </div>
      </div>
@@ -432,5 +432,7 @@ div.tabs :target {
 		</table>
 		
 </form>
+				
+
 </body>
 </html>
