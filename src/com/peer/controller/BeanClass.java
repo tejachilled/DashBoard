@@ -2,9 +2,6 @@ package com.peer.controller;
 
 import java.util.ArrayList;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotBlank;
 
 public class BeanClass {
@@ -21,12 +18,14 @@ public class BeanClass {
 	private String link;
 	private String assignment_name;
 	private String group_id;
+	private String assignment_id;
 	private String submission_date;
 	private int charCount;
 	private int wordCount;
 	private String fullName;
 	private String fullContext;
 	private ArrayList<String> images;
+	private ArrayList<String> groups;
 	
 	public String getAssignment_name() {
 		return assignment_name;
@@ -171,6 +170,22 @@ public class BeanClass {
 
 	public void setRole(String role) {
 		this.role = role;
-	}	
+	}
+
+	public ArrayList<String> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(ArrayList<String> groups) {
+		this.groups = groups;
+	}
+
+	public String getAssignment_id() {
+		return assignment_id;
+	}
+
+	public void setAssignment_id(String assignment_id) {
+		this.assignment_id = assignment_id;
+	}
 
 }

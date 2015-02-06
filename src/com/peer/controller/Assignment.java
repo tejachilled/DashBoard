@@ -164,7 +164,7 @@ public class Assignment {
 		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
 		ArrayList<BeanClass> peer = Database.GetPeerInfo(student);
 		System.out.println("EvaluateAssignment username: "+peer.get(0).getUsername());
-		ModelAndView mv = new ModelAndView("evaluate");			
+		ModelAndView mv = new ModelAndView("evaluate");
 		mv.addObject("headermsg", "Peer Evaluation");
 		mv.addObject("peer", peer);
 		return mv;

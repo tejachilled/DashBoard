@@ -40,11 +40,18 @@ public class Login {
 		binder.setDisallowedFields(new String[] {""});
 	}
 	@Value("${admin}")
-	private String role;
+	private String admin;
+	@Value("${student}")
+	private String stud;
+	@Value("${ta}")
+	private String ta;
+	@Value("${teacher}")
+	private String teacher;
+
 	@RequestMapping(value="/login",method= RequestMethod.GET)
 	public ModelAndView LoginPage() throws Exception {
 		ModelAndView mv = new ModelAndView("loginPage");
-		System.out.println(">>>>>>role:  "+role);
+		System.out.println(">>>>>>role:  "+admin);
 		return mv;
 	}
 	@RequestMapping(value="/validate",method= RequestMethod.POST)
@@ -54,26 +61,34 @@ public class Login {
 		if(result.hasErrors()){
 			return mv;
 		}
-		student = Database.validate(student);
-		System.out.println("Validate user role: "+student.getRole());
-		String role = student.getRole();
-		if(role!= null ){
-			if(role.equals("admin")){
-			mv = new ModelAndView("WelcomePage");
-				request.getSession().setAttribute("student",student);
-			}
-		}else{
-			mv.addObject("ErrorMsg", "Username/Password entered was incorrect!");
+		if(student.getRole()==null){
+			student = Database.validate(student);
+			request.getSession().setAttribute("student",student);
 		}
-		
+		System.out.println("Validate user role: "+student.getRole());
+
+		if(student!= null ){
+			String role = student.getRole();
+			if(role.equals(admin) || role.equals(stud)){
+				mv = new ModelAndView("WelcomePage");				
+			}else if(role.equals(teacher) || role.equals(ta)){
+				mv = new ModelAndView("TeacherWelcomePage");
+			}
+		} else
+			mv.addObject("ErrorMsg", "Username/Password entered was incorrect!");
+
 		return mv;
 	}
 
 	@RequestMapping(value="/WelcomePage",method= RequestMethod.POST) 
 	public ModelAndView WelcomePage(HttpServletRequest request ) throws Exception {
-		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
-		ModelAndView mv = new ModelAndView("WelcomePage");
-		mv.addObject("WelcomeMsg", student.getUsername());		
+		ModelAndView mv = new ModelAndView("WelcomePage");		
+		return mv;
+	}
+
+	@RequestMapping(value="/TeacherWelcomePage",method= RequestMethod.POST) 
+	public ModelAndView TeacherWelcomePage(HttpServletRequest request ) throws Exception {
+		ModelAndView mv = new ModelAndView("TeacherWelcomePage");		
 		return mv;
 	}
 
