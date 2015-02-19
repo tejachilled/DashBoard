@@ -1,6 +1,7 @@
 package com.peer.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -26,6 +27,8 @@ public class BeanClass {
 	private String fullContext;
 	private ArrayList<String> images;
 	private ArrayList<String> groups;
+	private ArrayList<BeanMarks> marks;
+	private HashMap<String, BeanClass> peerList;
 	
 	public String getAssignment_name() {
 		return assignment_name;
@@ -176,6 +179,14 @@ public class BeanClass {
 		return groups;
 	}
 
+	public ArrayList<BeanMarks> getMarks() {
+		return marks;
+	}
+
+	public void setMarks(ArrayList<BeanMarks> marks) {
+		this.marks = marks;
+	}
+
 	public void setGroups(ArrayList<String> groups) {
 		this.groups = groups;
 	}
@@ -186,6 +197,14 @@ public class BeanClass {
 
 	public void setAssignment_id(String assignment_id) {
 		this.assignment_id = assignment_id;
+	}
+
+	public HashMap<String, BeanClass> getPeerList() {
+		return peerList;
+	}
+
+	public void setPeerList(HashMap<String, BeanClass> peerList) {
+		this.peerList = peerList;
 	}
 
 }

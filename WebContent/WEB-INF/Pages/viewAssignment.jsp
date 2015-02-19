@@ -174,8 +174,54 @@ html, body{
 		myForm.submit();
 	}
 
+	function validate(){		
+		var tMarks = '${marks1}';
+		alert(tMarks.length);
+		if(tMarks!=null){
+			if(tMarks.length>5){
+				permission('1');permission('2');permission('3');
+			}
+			else{				
+				document.getElementById('mainTable').style.display = 'none';
+				document.getElementById('table1').style.display = 'none';
+				document.getElementById('table2').style.display = 'none';
+				document.getElementById('table3').style.display = 'none';
+			}
+		} else{
+			document.getElementById('mainTable').style.display = 'none';
+			document.getElementById('table1').style.display = 'none';
+			document.getElementById('table2').style.display = 'none';
+			document.getElementById('table3').style.display = 'none';
+		}
+	}
+	function permission(str){		
+		if(str==1){
+			document.getElementById('da'+str).value = '${marks1.analysis}';
+			document.getElementById('ra'+str).value = '${marks1.design}';
+			document.getElementById('ca'+str).value = '${marks1.vc}';
+			document.getElementById('con'+str).value = '${marks1.consistency}';
+			document.getElementById('as'+str).value = '${marks1.aesthetic}';
+			document.getElementById('org'+str).value = '${marks1.orginality}';	
+		}else if(str==2){
+			document.getElementById('da'+str).value = '${marks2.analysis}';
+			document.getElementById('ra'+str).value = '${marks2.design}';
+			document.getElementById('ca'+str).value = '${marks2.vc}';
+			document.getElementById('con'+str).value = '${marks2.consistency}';
+			document.getElementById('as'+str).value = '${marks2.aesthetic}';
+			document.getElementById('org'+str).value = '${marks2.orginality}';	
+		} else if(str==3){
+			document.getElementById('da'+str).value = '${marks3.analysis}';
+			document.getElementById('ra'+str).value = '${marks3.design}';
+			document.getElementById('ca'+str).value = '${marks3.vc}';
+			document.getElementById('con'+str).value = '${marks3.consistency}';
+			document.getElementById('as'+str).value = '${marks3.aesthetic}';
+			document.getElementById('org'+str).value = '${marks3.orginality}';	
+		}
+	}
+
+
 </script>
-<body style="height: 100%;">
+<body style="height: 100%;" onload="validate();">
 	<form action="/PeerTool/WelcomePage" method="post" >
 	<h1 align="center">${headermsg} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="home.png" width="30" onclick="submit();">&nbsp;<img src="view.png" width="30">&nbsp;<img src="self.png" width="30"></h1>
 	<br/>
@@ -219,23 +265,23 @@ html, body{
  </div> 
 	<br/>
 
-	<table border="1" width="60%" align="right">
+	<table border="1" width="60%" align="right" id="mainTable">
 			<tr>
 				<td align="center"><big>Review</big> </td>
 			</tr>
 			<tr>
 				<td>
-				<div class="CSSTableGenerator">
+				<div class="CSSTableGenerator" id="table1">
 					<table>
 						<tr>
-							<td colspan="3">Reviewer 1: <font color="orange"><b>90</b></font></td>
+							<td colspan="3">Meta Reviewer: <font color="orange"><b>90</b></font></td>
 						</tr>
 						<tr>
 							<td>
 							Data analysis (30%)
 							</td>
 							<td>
-								30
+								<input type="text" style="width: 50px;" id="da1" name="da1" value="30" readonly="readonly">
 							</td>
 							<td>
 								Thorough exploratory analysis.
@@ -244,7 +290,7 @@ html, body{
 						<tr>
 							<td>Rationales of visualization design and story (30%)</td>
 							<td>
-							 	30
+							 	<input type="text" style="width: 50px;" id="ra1" name="ra1" readonly="readonly">
 							</td>
 							<td>
 							
@@ -253,7 +299,7 @@ html, body{
 						<tr>
 							<td>Visualization clarity (10%)</td>
 							<td>
-							10
+							<input type="text" style="width: 50px;" id="ca1" name="ca1" value="2" >
 							</td>
 							<td>
 							Love the icon. The vis title clearly highlight the results.
@@ -262,7 +308,7 @@ html, body{
 						<tr>
 							<td>Consistency (5%)</td>
 							<td>
-							5
+							<input type="text" style="width: 50px;" id="con1" name="con1" readonly="readonly">
 							</td>
 							<td>
 							
@@ -271,7 +317,7 @@ html, body{
 						<tr>
 							<td>Aesthetic (10%)</td>
 							<td>
-							5
+							<input type="text" style="width: 50px;" id="as1" name="as1" readonly="readonly">
 							</td>
 							<td>
 							Given the icon was added to improve the readability, but the bar chart is not particularly apprealling
@@ -281,7 +327,7 @@ html, body{
 							<tr>
 							<td>Originality (15%)</td>
 							<td>
-								10
+								<input type="text" style="width: 50px;" id="org1" name="org1" readonly="readonly">
 							</td>
 							<td>
 								I don't understand the color selection.
@@ -293,17 +339,17 @@ html, body{
 			</tr>
 			<tr>
 				<td>
-					<div class="CSSTableGenerator">
+					<div class="CSSTableGenerator" id="table2">
 					<table>						
 						<tr>
-							<td colspan="3">Reviewer 2: <font color="orange"><b>85</b></font></td>
+							<td colspan="3">Reviewer 1: <font color="orange"><b>85</b></font></td>
 						</tr>
 						<tr>
 							<td>
 							Data analysis (30%)
 							</td>
 							<td>
-								30
+								<input type="text" style="width: 50px;" id="da2" name="da2" value="30" readonly="readonly">
 							</td>
 							<td>
 								
@@ -312,7 +358,7 @@ html, body{
 						<tr>
 							<td>Rationales of visualization design and story (30%)</td>
 							<td>
-							 	30
+							 	<input type="text" style="width: 50px;" id="ra2" name="ra2" readonly="readonly">
 							</td>
 							<td>
 								Since it's analyzing Djokovic's success, maybe a picture of his rather than an icon will elevate the attention. Just a thought.
@@ -321,7 +367,7 @@ html, body{
 						<tr>
 							<td>Visualization clarity (10%)</td>
 							<td>
-							10
+							<input type="text" style="width: 50px;" id="ca2" name="ca2" value="2" >
 							</td>
 							<td>
 								It's very clear. 
@@ -330,7 +376,7 @@ html, body{
 						<tr>
 							<td>Consistency (5%)</td>
 							<td>
-							5
+							<input type="text" style="width: 50px;" id="con2" name="con2" readonly="readonly">
 							</td>
 							<td>
 								consistent coloring.
@@ -339,7 +385,7 @@ html, body{
 						<tr>
 							<td>Aesthetic (10%)</td>
 							<td>
-							5
+							<input type="text" style="width: 50px;" id="as2" name="as2" readonly="readonly">
 							</td>
 							<td>
 								Too simple.
@@ -349,7 +395,7 @@ html, body{
 							<tr>
 							<td>Originality (15%)</td>
 							<td>
-								5
+								<input type="text" style="width: 50px;" id="org2" name="org2" readonly="readonly">
 							</td>
 							<td>
 								Not particularly impressive visualization.
@@ -362,17 +408,17 @@ html, body{
 			</tr>
 			<tr>
 				<td bgcolor="#FFFFCC">
-					<div class="CSSTableGenerator">
+					<div class="CSSTableGenerator" id="table3">
 					<table>
 						<tr>
-							<td colspan="3">Meta Reviewer: <font color="orange"><b>92</b></font></td>
+							<td colspan="3">Reviewer 2: <font color="orange"><b>92</b></font></td>
 						</tr>
 						<tr>
 							<td>
 							Data analysis (30%)
 							</td>
 							<td>
-								30
+								<input type="text" style="width: 50px;" id="da3" name="da3" value="30" readonly="readonly">
 							</td>
 							<td>
 								Very comprehensive exploratory analysis. Good call on not modeling data yet. 
@@ -381,7 +427,7 @@ html, body{
 						<tr>
 							<td>Rationales of visualization design and story (30%)</td>
 							<td>
-							 	30
+							 	<input type="text" style="width: 50px;" id="ra3" name="ra3" readonly="readonly">
 							</td>
 							<td>
 								Reference to reviewer 2. 
@@ -390,7 +436,7 @@ html, body{
 						<tr>
 							<td>Visualization clarity (10%)</td>
 							<td>
-							10
+							<input type="text" style="width: 50px;" id="ca3" name="ca3" value="2" >
 							</td>
 							<td>
 								Clear icon key improves visualization clarity.
@@ -399,7 +445,7 @@ html, body{
 						<tr>
 							<td>Consistency (5%)</td>
 							<td>
-							5
+							<input type="text" style="width: 50px;" id="con3" name="con3" readonly="readonly">
 							</td>
 							<td>
 								
@@ -408,7 +454,7 @@ html, body{
 						<tr>
 							<td>Aesthetic (10%)</td>
 							<td>
-							7
+							<input type="text" style="width: 50px;" id="as3" name="as3" readonly="readonly">
 							</td>
 							<td>
 								
@@ -418,7 +464,7 @@ html, body{
 							<tr>
 							<td>Originality (15%)</td>
 							<td>
-								10
+								<input type="text" style="width: 50px;" id="org3" name="org3" readonly="readonly">
 							</td>
 							<td>
 								What would you do if bar charts are not allowed to use?

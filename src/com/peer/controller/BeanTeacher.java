@@ -1,23 +1,19 @@
 package com.peer.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class BeanTeacher {
 
 	private String username;
-	private ArrayList<BeanClass> studentsList;
+	private HashMap<String, BeanClass> studentList;
 	private int randomNumber;
 	private String groupid;
 	private int assignment_id;
 	private String assignment_name;
 	private String submissionCount;
-	public ArrayList<BeanClass> getStudentsList() {
-		return studentsList;
-	}
-	public void setStudentsList(ArrayList<BeanClass> studentsList) {
-		this.studentsList = studentsList;
-	}
+	
 	public int getRandomNumber() {
 		return randomNumber;
 	}
@@ -53,6 +49,12 @@ public class BeanTeacher {
 	}
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	public HashMap<String, BeanClass> getStudentList() {
+		return studentList;
+	}
+	public void setStudentList(HashMap<String, BeanClass> studentList) {
+		this.studentList = studentList;
 	}
 	
 }

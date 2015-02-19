@@ -15,9 +15,8 @@ window.onload=function() {
 	     myForm.method="POST";
 	     myForm.submit();
 	    return false; // cancel the actual link
-	   }	 
+	   }
 	   document.getElementById("eassignment").onclick=function() {
-		   alert('cmg');
 	     var myForm = document.createElement("form");
 	     myForm.action=this.href;// the href of the link
 	     myForm.target="myFrame";

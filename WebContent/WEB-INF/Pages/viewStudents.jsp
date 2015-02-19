@@ -4,6 +4,8 @@
 <html>
 <head>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>View Students</title>
 </head>
@@ -54,30 +56,79 @@
 		<div id="header">
 			<h1>Peer Review Tool</h1>
 		</div>
-		
-		<div id="navleft">
-			
-		</div>
-		<div id="navright">
-			user: ${teacher.username}
-		</div><br/><br/>
-	<h3 align="center">Please select a student to evaluate:</h3>
+
+		<div id="navleft"></div>
+		<div id="navright">user: ${teacher.username}</div>
+		<br /> <br />
+		<h3 align="center">Please select a student to evaluate:</h3>
 		<div id="section">
-			<table align="center">
-				<c:set var="counter" value="1"/>
-				<c:forEach var="student" items="${teacher.studentsList}" varStatus="i" >
-				<tr>				
-					<td>${counter})</td>
-					<td><a href="/PeerTool/reviewWork/${student.username}" name="stud" id="vassignment" >${student.username}</a></td>
-				</tr>
-				<c:set var="counter" value="${counter + 1}"/>
-				</c:forEach>
-				
+			<table align="center" border="1">
 				<tr>
 					<td></td>
-					<td><input type="submit" value="submit"
-						onclick=" return validate();" /></td>
+					<td>Students</td>
+					<td>Peer1</td>
+					<td>Peer2</td>
+					<td>Teacher</td>
 				</tr>
+				<c:set var="counter" value="1" />
+				<fmt:parseNumber var="counter2" value="0" />
+				<c:set var="bool" value="0"></c:set>
+				<c:forEach var="student" items="${teacher.studentList}"
+					varStatus="i">
+					<tr>
+						<td>${counter})</td>
+						<td><a href="/PeerTool/reviewWork/${student.key}" name="stud"
+							id="vassignment">${student.key}</a></td>
+						<c:if test="${not empty student.value.marks}">
+							<c:choose>
+								<c:when test="${fn:length(student.value.marks) eq 3}">
+									<c:forEach var="list" items="${student.value.marks }">
+										<td><input type="radio" checked="checked"></td>
+									</c:forEach>
+								</c:when>
+								<c:when test="${fn:length(student.value.marks) eq 1}">
+									<c:forEach var="list" items="${student.value.marks }">
+										<c:if test="${list.teacher_evaluation == true }">
+											<td><input type="radio" readonly="readonly" disabled></td>
+											<td><input type="radio" readonly="readonly" disabled></td>
+											<td><input type="radio" checked="checked"></td>
+										</c:if>
+										<c:if test="${list.teacher_evaluation != true }">
+											<td><input type="radio" checked="checked"></td>
+											<td><input type="radio" readonly="readonly" disabled></td>
+											<td><input type="radio" readonly="readonly" disabled></td>
+										</c:if>
+									</c:forEach>
+								</c:when>
+								<c:when test="${fn:length(student.value.marks) eq 2}">
+									<c:forEach var="list" items="${student.value.marks }">
+										<c:if test="${list.teacher_evaluation == false }">
+											<td><input type="radio" checked="checked"></td>
+										</c:if>
+										<c:if test="${list.teacher_evaluation == true }">
+											<c:set var="bool" value="1"></c:set>
+										</c:if>
+									</c:forEach>
+									<c:if test="${bool == 1 }">
+										<td><input type="radio" readonly="readonly" disabled></td>
+										<td><input type="radio" checked="checked"></td>
+									</c:if>
+								</c:when>
+							</c:choose>
+
+
+						</c:if>
+						<c:if test="${ empty student.value.marks}">
+							<td><input type="radio" readonly="readonly" disabled>
+							</td>
+							<td><input type="radio" readonly="readonly" disabled></td>
+							<td><input type="radio" readonly="readonly" disabled>
+							</td>
+						</c:if>
+					</tr>
+					<c:set var="counter" value="${counter + 1}" />
+				</c:forEach>
+
 			</table>
 
 		</div>

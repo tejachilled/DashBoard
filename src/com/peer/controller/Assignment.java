@@ -2,14 +2,21 @@ package com.peer.controller;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -19,6 +26,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -90,10 +99,7 @@ public class Assignment {
 			}		 
 			student = HTMLParser(student);
 			student = Words_Chars(student);
-			//ArrayList  
-			ArrayList<String> demo = new ArrayList<String>();
-			demo.add("Worst!");demo.add("best!");demo.add("Worst!");demo.add("best!");demo.add("Worst!");demo.add("best!");demo.add("Worst!");demo.add("best!");
-			student.setReview(demo);
+
 			student = Database.UserDataUploadtoDB(student);
 			System.out.println("upload: submission date "+student.getSubmission_date());
 			ModelAndView mv = viewAssignment(request);
@@ -121,7 +127,7 @@ public class Assignment {
 		//Images part
 		int images = 0;
 		Document document = Jsoup.connect(student.getLink()).get();
-		
+
 		Elements media = document.select("[src]");
 		StringBuilder img = new StringBuilder();
 		ArrayList<String> imageFiles = new ArrayList<String>();
@@ -146,13 +152,23 @@ public class Assignment {
 
 	@RequestMapping(value="/vassignment",method= RequestMethod.POST)
 	protected ModelAndView viewAssignment(HttpServletRequest request) throws Exception{
-
 		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
 		ModelAndView mv = new ModelAndView("viewAssignment");	
-		
+
 		if(student.getImagefile()==null){
-			student = Database.RetrieveInfo(student);
+			student = Database.RetrieveInfo(student);			
 		}
+		int i=2;
+		if(student.getMarks()!=null){
+			for(BeanMarks marks : student.getMarks()){
+				if(!marks.isTeacher_evaluation()){
+					mv.addObject("marks"+i,marks); i++;
+				}else{
+					mv.addObject("marks1",marks); 
+				}
+			}
+		}
+
 		System.out.println(">>>>>text<<<<\n "+student.getContent());
 		mv.addObject("reviewheader", "Review");
 		mv.addObject("headermsg", "View Assignment");
@@ -161,48 +177,82 @@ public class Assignment {
 
 	@RequestMapping(value="/eassignment",method= RequestMethod.POST)
 	protected ModelAndView EvaluateAssignment(HttpServletRequest request) throws Exception{
+
 		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
-		ArrayList<BeanClass> peer = Database.GetPeerInfo(student);
-		System.out.println("EvaluateAssignment username: "+peer.get(0).getUsername());
-		ModelAndView mv = new ModelAndView("evaluate");
+		System.out.println("EvaluateAssignment: "+student);
+		if(student==null) student = (BeanClass) request.getSession().getAttribute("reviewer");
+		System.out.println("EvaluateAssignment student.getUsername() : "+student.getUsername());
+		HashMap<String, BeanClass> peerObj = Database.GetPeerInfo(student);
+		student.setPeerList(peerObj);
+		request.getSession().setAttribute("student", student);
+		System.out.println("EvaluateAssignment peer size: "+peerObj.size());
+		ModelAndView mv = new ModelAndView("selectPeer");
 		mv.addObject("headermsg", "Peer Evaluation");
-		mv.addObject("peer", peer);
+		mv.addObject("mode","student");
+		mv.addObject("peerObj", peerObj);
 		return mv;
 	}
 
-	/*	
-	private String GetEncodedString(String imagefile) {
-		File file = new File(imagefile);
-		String encodedString = "";
-		try{
-			FileInputStream fis=new FileInputStream(file);
-			ByteArrayOutputStream bos=new ByteArrayOutputStream();
-			int b;
-			byte[] buffer = new byte[1024];
-			while((b=fis.read(buffer))!=-1){
-				bos.write(buffer,0,b);
-			}
-			byte[] fileBytes=bos.toByteArray();
-			fis.close();
-			bos.close();
-
-
-			byte[] encoded=Base64.encodeBase64(fileBytes);
-
-			encodedString = new String(encoded);
-		}catch(Exception e){ e.printStackTrace();}
-		return encodedString;
-	}
-
-
-	private static void close(Closeable resource) {
-		if (resource != null) {
-			try {
-				resource.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	@RequestMapping(value="/peerWork/{stud}",method= RequestMethod.GET)
+	protected ModelAndView review(@PathVariable("stud") String uname,HttpServletRequest request) throws Exception{
+		System.out.println("peer name: "+uname);
+		ModelAndView mv = new ModelAndView("evaluate");
+		BeanClass reviewer = (BeanClass) request.getSession().getAttribute("student");
+		if(reviewer==null) reviewer = (BeanClass) request.getSession().getAttribute("reviewer");
+		BeanClass peer = null;
+		HashMap<String, BeanClass> peerObj = reviewer.getPeerList();
+		System.out.println("peers size: "+peerObj.size());
+		if(peerObj.size()>0){
+			peer = peerObj.get(uname);
 		}
+		request.getSession().setAttribute("reviewer", reviewer);
+		request.getSession().removeAttribute("student");		
+		System.out.println("review method peer id: "+peer.getUsername());
+		request.getSession().setAttribute("mode","student" );
+		mv.addObject("mode","student");
+		mv.addObject("student", peer);
+		mv.addObject("headermsg", "Evaluate Peer Assignment");
+		return mv;
 	}
-	 */
+
+	public static String getValues(String inp) throws IOException{
+		Properties prop = new Properties();
+		InputStream input = new FileInputStream("C:/Users/tejj/Desktop/PeerTool/PeerTool/WebContent/WEB-INF/constants.properties");
+		if(input==null) System.out.println("nullllllllll values in review class");
+		// load a properties file
+		prop.load(input);
+		if(prop.get(inp)!=null) return (String) prop.get(inp);
+		return null;
+	}
+
+	@RequestMapping(value="/saveMarks",method= RequestMethod.POST)
+	protected ModelAndView saveMarks(@ModelAttribute("marks") BeanMarks marks, HttpServletRequest request) throws Exception{
+		String mode = (String) request.getSession().getAttribute("mode");
+		System.out.println("saveMarks method mode: "+mode);
+		ModelAndView mv = null;
+		String peerId = request.getParameter("peerId");		
+		System.out.println("design Marks: "+marks.getDesign());
+		System.out.println("peer Id: "+peerId);
+		if(mode.equals("teacher")){
+			BeanTeacher teacher = (BeanTeacher) request.getSession().getAttribute("teacher");
+			Database.UploadMarks(teacher.getUsername(),peerId,marks,mode);
+			teacher = Database.GetStudentsInfo(teacher);
+			System.out.println("student 1 teacher evaluation : "+teacher.getStudentList().get("1").getMarks().get(0).isTeacher_evaluation());
+			request.getSession().setAttribute("teacher", teacher);
+			mv = new ModelAndView("viewStudents");
+		}else{			
+			BeanClass reviewer =  (BeanClass) request.getSession().getAttribute("reviewer");
+			System.out.println("save marks: "+reviewer.getUsername());
+			request.getSession().setAttribute("student", reviewer);
+			//request.getSession().removeAttribute("reviewer");
+			BeanClass peer = reviewer.getPeerList().get(peerId);			
+			System.out.println("peer id from session: "+peer.getUsername());
+			Database.UploadMarks(reviewer.getUsername(),peerId,marks,mode);
+			mv = new ModelAndView("selectPeer");
+			mv = EvaluateAssignment(request);
+		}
+		return mv;
+	}
+
+
 }
