@@ -31,11 +31,11 @@ analysis int,design int,vc int,consistency int,aesthetic int, orginality int, to
 analysis_text varchar(200), design_text varchar(200),clarity_text varchar(200),aesthetic_text varchar(200),orginality_text varchar(200),tot_text varchar(200)
 );
 
-insert into user_table values('admin','admin','password','admin','rthutari@asu.edu');
+insert into user_table values('admin','admin','password','admin','rthutari@asu.edu','fall15');
 
 select * from user_table;
 
-//retreving peer info
+/*retreving peer info*/
 
 select user_id,assignment_id,group_id,assignment_name,imagefile,NoofImages,content,link, 
 submissioncount,submissionDate,wordcount,charcount

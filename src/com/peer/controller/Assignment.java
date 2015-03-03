@@ -99,7 +99,7 @@ public class Assignment {
 			}		 
 			student = HTMLParser(student);
 			student = Words_Chars(student);
-
+			System.out.println("ravi group id : "+student.getGroup_id());
 			student = Database.UserDataUploadtoDB(student);
 			System.out.println("upload: submission date "+student.getSubmission_date());
 			ModelAndView mv = viewAssignment(request);

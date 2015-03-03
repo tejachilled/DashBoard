@@ -36,19 +36,21 @@ public class Database {
 	public static BeanClass validate(BeanClass student) throws SQLException{
 
 		if(conn==null || conn.isClosed())GetConnection();
-		String sqlQuery = "SELECT PASSWRD,ROLE FROM USER_TABLE WHERE USER_ID = ?";
+		String sqlQuery = "SELECT PASSWRD,ROLE,group_id FROM USER_TABLE WHERE USER_ID = ?";
 		PreparedStatement ps = conn.prepareStatement(sqlQuery);
 		ps.setString(1, student.getUsername());
 		ResultSet rs = ps.executeQuery();
 		String pwd =""; String role = "";
+		String group_id = "";
 		while(rs.next()){
 			pwd = rs.getString(1);	
 			role = rs.getString(2);
+			group_id = rs.getString(3);
 		}
 		System.out.println(student.getUsername()+" :login info: "+student.getPassword());
 		System.out.println("DB pwd: "+pwd + " role: "+role);
 		if(pwd.equals(student.getPassword())){
-			student.setRole(role);
+			student.setRole(role); student.setGroup_id(group_id);
 			if(role.equalsIgnoreCase(Database.student))
 				student = RetrieveInfo(student);
 			else if(role.equalsIgnoreCase(teacher)||role.equalsIgnoreCase(ta))

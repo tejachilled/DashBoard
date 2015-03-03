@@ -89,8 +89,9 @@ public class Login {
 		if(student.getRole()==null){
 			student = Database.validate(student);
 			request.getSession().setAttribute("student",student);
+			//System.out.println("Validate user role: "+student.getRole());
 		}
-		System.out.println("Validate user role: "+student.getRole());
+		
 
 		if(student!= null ){
 			String role = student.getRole();
