@@ -48,10 +48,35 @@ public class Login {
 	@Value("${teacher}")
 	private String teacher;
 
-	@RequestMapping(value="/login",method= RequestMethod.GET)
+	@RequestMapping(value="/",method= RequestMethod.GET)
 	public ModelAndView LoginPage() throws Exception {
 		ModelAndView mv = new ModelAndView("loginPage");
-		System.out.println(">>>>>>role:  "+admin);
+		return mv;
+	}
+	@RequestMapping(value="/register",method= RequestMethod.GET)
+	public ModelAndView Register() throws Exception {
+		ModelAndView mv = new ModelAndView("register");
+		mv.addObject("headermsg", "Registration Page");
+		return mv;
+	}
+
+	@RequestMapping(value="/saveUserInfo",method= RequestMethod.POST)
+	public ModelAndView SaveUserInfo(@ModelAttribute("userInfo") UserInfoBean userInfo) throws Exception {
+		ModelAndView mv = new ModelAndView("loginPage");
+		System.out.println("SaveUserInfo group: "+userInfo.getGroup());
+		String customMsg = Database.RegisterUser(userInfo);
+		System.out.println("save user info custom msg : "+customMsg);
+		if(customMsg.equalsIgnoreCase("email")){
+			mv = new ModelAndView("register");
+			mv.addObject("headermsg", "Registration Page");
+			mv.addObject("customMsg", "Email id was already registered!");
+		}else if(customMsg.equalsIgnoreCase("userid")){
+			mv = new ModelAndView("register");
+			mv.addObject("headermsg", "Registration Page");
+			mv.addObject("customMsg", "User Id already exists, please choose a different user id!");
+		}else{
+			mv.addObject("customMsg", "Registered Successfully!");
+		}
 		return mv;
 	}
 	@RequestMapping(value="/validate",method= RequestMethod.POST)

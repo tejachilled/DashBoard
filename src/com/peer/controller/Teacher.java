@@ -32,6 +32,7 @@ public class Teacher {
 			teacher = Database.GetStudentsInfo(teacher);
 			teacher.setUsername(student.getUsername());
 			request.getSession().setAttribute("teacher",teacher);
+			if(teacher.getStudentList()!=null)
 			System.out.println("Tot number of students: "+teacher.getStudentList().size());
 		}
 		return mv;
@@ -46,6 +47,16 @@ public class Teacher {
 		HashMap<String, BeanClass> map = teacher.getStudentList();
 		if(map.size()>0){
 			student = map.get(uname);
+			int i =2;
+			if(student.getMarks()!=null){
+				for(BeanMarks marks : student.getMarks()){
+					if(!marks.isTeacher_evaluation()){
+						mv.addObject("marks"+i,marks); i++;
+					}else{
+						mv.addObject("marks1",marks); 
+					}
+				}
+			}
 		}
 		Properties prop = new Properties();
 		InputStream input = new FileInputStream("C:/Users/tejj/Desktop/PeerTool/PeerTool/WebContent/WEB-INF/constants.properties");

@@ -176,7 +176,7 @@ html, body{
 
 	function validate(){		
 		var tMarks = '${marks1}';
-		alert(tMarks.length);
+		//alert(tMarks.length);
 		if(tMarks!=null){
 			if(tMarks.length>5){
 				permission('1');permission('2');permission('3');

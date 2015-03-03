@@ -177,7 +177,6 @@ public class Assignment {
 
 	@RequestMapping(value="/eassignment",method= RequestMethod.POST)
 	protected ModelAndView EvaluateAssignment(HttpServletRequest request) throws Exception{
-
 		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
 		System.out.println("EvaluateAssignment: "+student);
 		if(student==null) student = (BeanClass) request.getSession().getAttribute("reviewer");
@@ -201,9 +200,21 @@ public class Assignment {
 		if(reviewer==null) reviewer = (BeanClass) request.getSession().getAttribute("reviewer");
 		BeanClass peer = null;
 		HashMap<String, BeanClass> peerObj = reviewer.getPeerList();
-		System.out.println("peers size: "+peerObj.size());
+		System.out.println("peers size: "+peerObj.size());				
 		if(peerObj.size()>0){
 			peer = peerObj.get(uname);
+			if(peer.getMarks()!=null){
+				System.out.println("peer marks not null: ");				
+				for(BeanMarks marks : peer.getMarks()){		
+					System.out.println("marks.isTeacher_evaluation(): "+marks.isTeacher_evaluation());
+					if(!marks.isTeacher_evaluation() && (marks.getPeerId().equalsIgnoreCase(reviewer.getUsername()) )){
+						mv.addObject("marks3",marks);
+						System.out.println("orginal user id : "+ reviewer.getUsername() + " marks peer id : "+marks.getPeerId());
+						System.out.println("marks user id : "+marks.getUserId());
+						System.out.println("marks  getAesthetic: "+marks.getAesthetic());
+					}
+				}
+			}
 		}
 		request.getSession().setAttribute("reviewer", reviewer);
 		request.getSession().removeAttribute("student");		

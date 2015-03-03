@@ -4,8 +4,9 @@ create table user_table(
 user_id varchar(20) NOT null PRIMARY KEY,
 uname varchar(60),
 passwrd varchar(12),
-role varchar(20),
-email varchar(30)
+role varchar(50) default 'student',
+email varchar(30),
+group_id VARCHAR(65) default 'spring15'
 );
 
 create table user_assignment(

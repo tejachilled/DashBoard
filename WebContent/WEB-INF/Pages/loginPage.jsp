@@ -34,8 +34,8 @@
 }
 /*http://upload.wikimedia.org/wikipedia/commons/5/5b/Creete_background.jpg */
 body {
-background-image: url('http://collegium.eu/posebne-ponude/wp-content/uploads/2014/04/5.jpg');
-
+	background-image:
+		url('http://collegium.eu/posebne-ponude/wp-content/uploads/2014/04/5.jpg');
 	background-size: cover;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -43,23 +43,28 @@ background-image: url('http://collegium.eu/posebne-ponude/wp-content/uploads/201
 	margin: 0;
 	padding: 0;
 }
-h1 {color: white;}
+
+h1 {
+	color: white;
+}
 </style>
 </head>
 <body onload='document.loginForm.username.focus();'>
 	<h1 align="center">${headermsg}</h1>
+	
 	<div id="error" align="center">
 		<form:errors path="student.*"></form:errors>
 		${ErrorMsg}
 	</div>
 	<div id="login-box">
 
-		<h3>Login with Username and Password</h3>
+		<h3>Login with UserId and Password</h3>
 
-		<form name='loginForm' action="/PeerTool/validate" method="post" >
-			<table>
+		<form name='loginForm' action="/PeerTool/validate" method="post">
+		<strong style="color: #339933" > ${customMsg} </strong>
+			<table> 
 				<tr>
-					<td>User:</td>
+					<td>User Id:</td>
 					<td><input type='text' name='username'></td>
 				</tr>
 				<tr>
@@ -72,7 +77,13 @@ h1 {color: white;}
 				</tr>
 			</table>
 		</form>
+		<table>
+			<tr>
+				<td>New user -</td>
+				<td><a href="/PeerTool/register">Register Here!</a></td>
+			</tr>
+		</table>
 	</div>
-	
+
 </body>
 </html>

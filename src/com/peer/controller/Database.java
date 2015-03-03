@@ -62,11 +62,81 @@ public class Database {
 
 		return student;
 	}
+	public static String RegisterUser(UserInfoBean userInfo) throws SQLException {
+		// TODO Auto-generated method stub
+		if(conn==null || conn.isClosed())GetConnection();
+		String sqlQuery = "INSERT INTO user_table(user_id,uname,passwrd,email) values(?,?,?,?)";
+		int count =0;
+		if(CheckEmail(userInfo)){
+			return "email";
+		}else if(CheckUId(userInfo)){
+			return "userid";
+		} else{
+			try {
+				PreparedStatement ps = conn.prepareStatement(sqlQuery);
+				ps.setString(1, userInfo.getUser_id());
+				ps.setString(2, userInfo.getUname());
+				ps.setString(3, userInfo.getPassword());
+				ps.setString(4, userInfo.getEmailId());
+				count = ps.executeUpdate();
+			}catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				conn.close();
+				System.out.println("New user registration successful!");
+			}
+		}
+		return "success";
+	}
+	private static boolean CheckUId(UserInfoBean userInfo) throws SQLException {
+		// TODO Auto-generated method stub
+		if(conn==null || conn.isClosed())GetConnection();
+		int count = 0;
+		String sqlQuery = "select count(*) from user_table where user_id = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sqlQuery);
+			ps.setString(1, userInfo.getUser_id());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				count = rs.getInt(1);
+			}
+			ps.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("user id count: "+count);
+		if(count ==0) return false;
+		return true;
+	}
+	private static boolean CheckEmail(UserInfoBean userInfo) throws SQLException {
+		// TODO Auto-generated method stub
+		if(conn==null || conn.isClosed())GetConnection();
+		int count = 0;
+		String sqlQuery = "select count(*) cou from user_table where email = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sqlQuery);
+			ps.setString(1, userInfo.getEmailId());
+			System.out.println(ps.toString());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()){
+				count = rs.getInt("cou");				
+			}
+			ps.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("email id count: "+count);
+		if(count ==0) return false;
+		return true;
+	}
 	private static BeanClass TeacherInfo(BeanClass student) throws SQLException {
 		// TODO Auto-generated method stub
 		if(conn==null || conn.isClosed())GetConnection();
 		ArrayList<String> al = new ArrayList<String>();
-		String sqlQuery = "select  distinct group_id  from user_assignment group by group_id";
+		String sqlQuery = "select  distinct group_id  from user_table";
 		try {
 			Statement ps = conn.createStatement();
 			ResultSet rs = ps.executeQuery(sqlQuery);
@@ -97,7 +167,7 @@ public class Database {
 		System.out.println("todays date is : "+date);
 		System.out.println("No of Submissions: "+count);
 		if(count<=50){
-			String sqlQuery = "INSERT INTO USER_ASSIGNMENT(USER_ID,IMAGEFILE,CONTENT,LINK,SUBMISSIONCOUNT,SUBMISSIONDATE,NOOFIMAGES,WORDCOUNT,CHARCOUNT) VALUES(?,?,?,?,?,?,?,?,?)";
+			String sqlQuery = "INSERT INTO USER_ASSIGNMENT(USER_ID,IMAGEFILE,CONTENT,LINK,SUBMISSIONCOUNT,SUBMISSIONDATE,NOOFIMAGES,WORDCOUNT,CHARCOUNT,group_id) VALUES(?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(sqlQuery);
 			ps.setString(1, student.getUsername());
 			ps.setString(2, student.getImagefile());
@@ -108,6 +178,7 @@ public class Database {
 			ps.setInt(7, student.getImagesNumber());
 			ps.setInt(8, student.getWordCount());
 			ps.setInt(9, student.getCharCount());
+			ps.setString(10, student.getGroup_id());
 			ps.executeUpdate();
 			student.setSubmission_date(""+date);
 			System.out.println("Inserted a record into DB");
@@ -150,9 +221,11 @@ public class Database {
 			student.setWordCount(rs.getInt("WORDCOUNT"));
 			student.setCharCount(rs.getInt("CHARCOUNT"));
 		}
-		student = GetImageList(student);
-		student = GetHTMLBody(student);
-		student = GetMarks(student);
+		if(student.getImagefile()!=null){
+			student = GetImageList(student);
+			student = GetHTMLBody(student);
+			student = GetMarks(student);
+		}
 		ps.close();
 		conn.close();
 		return student;
@@ -204,14 +277,14 @@ public class Database {
 		return teacher;
 	}
 
-	private static BeanClass GetMarks(BeanClass student) throws SQLException {
+	public static BeanClass GetMarks(BeanClass student) throws SQLException {
 		// TODO Auto-generated method stub
 		PreparedStatement ps = null;
 		StringBuffer sb = new StringBuffer();
 		ArrayList<BeanMarks> list = new ArrayList<BeanMarks>();
 		try {
 			if(conn==null || conn.isClosed()) GetConnection();
-			sb.append("select count,teacher_evaluation,analysis,design,vc,consistency,aesthetic,orginality,tot from peer_table");
+			sb.append("select count,teacher_evaluation,analysis,design,vc,consistency,aesthetic,orginality,tot,user_id,peer_id from peer_table");
 			sb.append(" where user_id = ?");
 			ps = conn.prepareStatement(sb.toString());
 			ps.setString(1, student.getUsername());
@@ -230,6 +303,8 @@ public class Database {
 				marks.setAesthetic(rs.getInt("aesthetic"));
 				marks.setOrginality(rs.getInt("orginality"));
 				marks.setTotal(rs.getInt("tot"));
+				marks.setUserId(rs.getString("user_id"));
+				marks.setPeerId(rs.getString("peer_id"));
 				list.add(marks);
 			}
 
@@ -334,6 +409,7 @@ public class Database {
 	public static HashMap<String, BeanClass> GetPeerInfo(BeanClass student) throws SQLException {
 		HashMap<String, BeanClass> map = new HashMap<String, BeanClass>();
 		PreparedStatement ps = null;
+		int count =0;
 		try {
 			if(conn==null || conn.isClosed()) GetConnection();
 			student = getSubmissionDate(student);
@@ -361,8 +437,39 @@ public class Database {
 				peer.setCharCount(rs.getInt("CHARCOUNT"));	
 				peer  = GetImageList(peer);
 				peer = GetHTMLBody(peer);
+				peer = GetMarks(peer);
 				//System.out.println(peer.getUsername());
 				map.put(peer.getUsername(), peer);
+				count++;
+			}
+			if(count <2){
+				sqlQuery = new StringBuffer();			
+				sqlQuery.append("select user_id,assignment_id,group_id,assignment_name,imagefile,NoofImages,content,link,");
+				sqlQuery.append("submissioncount,submissionDate,wordcount,charcount from user_assignment where  (user_id,submissionDate) in");
+				sqlQuery.append("(select user_id,max(submissionDate) from user_assignment  group by user_id) ");
+				sqlQuery.append("order by submissionDate ");
+				ps = conn.prepareStatement(sqlQuery.toString());
+				rs = ps.executeQuery();
+				while(rs.next() && count <2){
+					BeanClass peer = new BeanClass();
+					peer.setUsername(rs.getString("USER_ID"));
+					peer.setFullContext(rs.getString("CONTENT"));
+					peer.setImagefile(rs.getString("IMAGEFILE"));
+					peer.setLink(rs.getString("LINK"));
+					peer.setAssignment_id(rs.getString("assignment_id"));
+					peer.setAssignment_name(rs.getString("assignment_name"));
+					peer.setGroup_id(rs.getString("group_id"));
+					peer.setSubmission_date(""+rs.getTimestamp("submissionDate"));
+					peer.setImagesNumber(rs.getInt("NOOFIMAGES"));
+					peer.setWordCount(rs.getInt("WORDCOUNT"));
+					peer.setCharCount(rs.getInt("CHARCOUNT"));	
+					peer  = GetImageList(peer);
+					peer = GetHTMLBody(peer);
+					peer = GetMarks(peer);
+					map.put(peer.getUsername(), peer);
+					count++;
+
+				}
 			}
 		}catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -460,6 +567,7 @@ public class Database {
 		}
 
 	}
+
 
 
 

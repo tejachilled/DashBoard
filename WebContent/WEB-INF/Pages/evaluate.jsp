@@ -113,7 +113,6 @@ div.tabs :target {
 		background:-o-linear-gradient(bottom, #003366 5%, #003f7f 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #003366), color-stop(1, #003f7f) );
 	background:-moz-linear-gradient( center top, #003366 5%, #003f7f 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#003366", endColorstr="#003f7f");	background: -o-linear-gradient(top,#003366,003f7f);
-
 	background-color:#003366;
 	border:0px solid #000000;
 	text-align:center;
@@ -127,7 +126,6 @@ div.tabs :target {
 	background:-o-linear-gradient(bottom, #003366 5%, #003f7f 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #003366), color-stop(1, #003f7f) );
 	background:-moz-linear-gradient( center top, #003366 5%, #003f7f 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#003366", endColorstr="#003f7f");	background: -o-linear-gradient(top,#003366,003f7f);
-
 	background-color:#003366;
 }
 .CSSTableGenerator tr:first-child td:first-child{
@@ -165,18 +163,46 @@ html, body{
 </style>
 </head>
 <script>
+function display(str){		
+	if(str==1){
+		document.getElementById('da'+str).value = '${marks1.analysis}';
+		document.getElementById('ra'+str).value = '${marks1.design}';
+		document.getElementById('ca'+str).value = '${marks1.vc}';
+		document.getElementById('con'+str).value = '${marks1.consistency}';
+		document.getElementById('as'+str).value = '${marks1.aesthetic}';
+		document.getElementById('org'+str).value = '${marks1.orginality}';	
+	}else if(str==2){
+		document.getElementById('da'+str).value = '${marks2.analysis}';
+		document.getElementById('ra'+str).value = '${marks2.design}';
+		document.getElementById('ca'+str).value = '${marks2.vc}';
+		document.getElementById('con'+str).value = '${marks2.consistency}';
+		document.getElementById('as'+str).value = '${marks2.aesthetic}';
+		document.getElementById('org'+str).value = '${marks2.orginality}';	
+	} else if(str==3){
+		document.getElementById('da'+str).value = '${marks3.analysis}';
+		document.getElementById('ra'+str).value = '${marks3.design}';
+		document.getElementById('ca'+str).value = '${marks3.vc}';
+		document.getElementById('con'+str).value = '${marks3.consistency}';
+		document.getElementById('as'+str).value = '${marks3.aesthetic}';
+		document.getElementById('org'+str).value = '${marks3.orginality}';	
+	}
+}
 function validate(){
 	
 	var mode = '${mode}';
 	//alert(mode);
 	if(mode=='teacher'){
 		permission('1');
+		display('1');display('2');display('3');
+		var tMarks = '${marks1}';
+		
 	}else if(mode == 'student'){
-		var div2 = document.getElementById('table1');
-		var div3 = document.getElementById('table2');
+		var div1 = document.getElementById('table1');
+		var div2 = document.getElementById('table2');
+		div1.style.display = 'none';
 		div2.style.display = 'none';
-		div3.style.display = 'none';
 		permission('3');
+		display('3');
 	}
 }
 function permission(str){
@@ -260,7 +286,7 @@ function permission(str){
 							Data analysis (30%)
 							</td>
 							<td>
-								<input type="text" style="width: 50px;" id="da1" name="da1" value="30" readonly="readonly">
+								<input type="text" style="width: 50px;" id="da1" name="da1" value="" readonly="readonly">
 							</td>
 							<td>
 								Thorough exploratory analysis.
@@ -328,7 +354,7 @@ function permission(str){
 							Data analysis (30%)
 							</td>
 							<td>
-								<input type="text" style="width: 50px;" id="da2" name="da2" value="30" readonly="readonly">
+								<input type="text" style="width: 50px;" id="da2" name="da2" value="" readonly="readonly">
 							</td>
 							<td>
 								
@@ -396,7 +422,7 @@ function permission(str){
 							Data analysis (30%)
 							</td>
 							<td>
-								<input type="text" style="width: 50px;" id="da3" name="da3" value="30" readonly="readonly">
+								<input type="text" style="width: 50px;" id="da3" name="da3" value="" readonly="readonly">
 							</td>
 							<td>
 								Very comprehensive exploratory analysis. Good call on not modeling data yet. 
