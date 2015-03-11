@@ -223,7 +223,7 @@ html, body{
 </script>
 <body style="height: 100%;" onload="validate();">
 	<form action="/PeerTool/WelcomePage" method="post" >
-	<h1 align="center">${headermsg} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="C:/Users/lyihan/Documents/GitHub/DashBoard/WebContent/WEB-INF/resources/home.png" width="30" onclick="submit();">&nbsp;<img src="C:/Users/lyihan/Documents/GitHub/DashBoard/WebContent/WEB-INF/resources/view.png" width="30">&nbsp;<img src="C:/Users/lyihan/Documents/GitHub/DashBoard/WebContent/WEB-INF/resources/self.png" width="30"></h1>
+	<h1 align="center">${headermsg} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="home.png" width="30" onclick="submit();">&nbsp;<img src="view.png" width="30">&nbsp;<img src="self.png" width="30"></h1>
 	<br/>
 	<div>
 		<div class="left_div" >
@@ -265,7 +265,7 @@ html, body{
  </div> 
 	<br/>
 
-	<table border="1" width="60%" align="center" id="mainTable">
+	<table border="1" width="60%" align="right" id="mainTable">
 			<tr>
 				<td align="center"><big>Review</big> </td>
 			</tr>
