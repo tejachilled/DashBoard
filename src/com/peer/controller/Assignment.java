@@ -40,11 +40,29 @@ public class Assignment {
 	private static final int MAX_MEMORY_SIZE = 1024 * 1024 * 2;
 	private static final int MAX_REQUEST_SIZE = 1024 * 1024;
 
-	@RequestMapping(value="/submitwork",method= RequestMethod.GET)
-	public ModelAndView SubmitAssignment() throws Exception {
+	@RequestMapping(value="/submitwork",method= RequestMethod.POST)
+	public ModelAndView SubmitAssignment(HttpServletRequest request) throws Exception {
 		// TODO Auto-generated method stub 		
+		String aid = (String) request.getParameter("aid"); 
+		System.out.println("SubmitAssignment assignmentid : "+aid);
+		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
+		student.setAssignment_id(aid);
 		ModelAndView mv = new ModelAndView("upload");	
 		mv.addObject("headermsg", "Assignment");
+		return mv;
+	}
+	
+	@RequestMapping(value="/studentPage",method= RequestMethod.POST)
+	protected ModelAndView studentPage(HttpServletRequest request) throws Exception{
+		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
+		System.out.println("studentPage username: "+student.getUsername());
+		ModelAndView mv = new ModelAndView("displayStudent");	
+		ArrayList<String> list = Database.getAssignmentIds(student);
+		System.out.println("list size: "+list.size());
+		mv.addObject("reviewheader", "Review");
+		mv.addObject("list",list);
+		mv.addObject("listSize",list.size());
+		mv.addObject("headermsg", "Upload/View Assignment");
 		return mv;
 	}
 
@@ -67,12 +85,13 @@ public class Assignment {
 		// java
 		factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
 		// constructs the folder where uploaded file will be stored
-		String uploadFolder = "C:/Users/tejj/Downloads/Ravi";
+		String uploadFolder = Database.getValues("uploadFolder");
 		// Create a new file upload handler
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		// Set overall request size constraint
 		upload.setSizeMax(MAX_REQUEST_SIZE);        
 		BeanClass student = (BeanClass) request.getSession().getAttribute("student");
+		System.out.println("student aid : "+student.getAssignment_id());
 		try {
 			// Parse the request
 			List items = upload.parseRequest(request);
@@ -226,16 +245,6 @@ public class Assignment {
 		return mv;
 	}
 
-	public static String getValues(String inp) throws IOException{
-		Properties prop = new Properties();
-		InputStream input = new FileInputStream("C:/Users/tejj/Desktop/PeerTool/PeerTool/WebContent/WEB-INF/constants.properties");
-		if(input==null) System.out.println("nullllllllll values in review class");
-		// load a properties file
-		prop.load(input);
-		if(prop.get(inp)!=null) return (String) prop.get(inp);
-		return null;
-	}
-
 	@RequestMapping(value="/saveMarks",method= RequestMethod.POST)
 	protected ModelAndView saveMarks(@ModelAttribute("marks") BeanMarks marks, HttpServletRequest request) throws Exception{
 		String mode = (String) request.getSession().getAttribute("mode");
@@ -248,7 +257,7 @@ public class Assignment {
 			BeanTeacher teacher = (BeanTeacher) request.getSession().getAttribute("teacher");
 			Database.UploadMarks(teacher.getUsername(),peerId,marks,mode);
 			teacher = Database.GetStudentsInfo(teacher);
-			System.out.println("student 1 teacher evaluation : "+teacher.getStudentList().get("1").getMarks().get(0).isTeacher_evaluation());
+			//System.out.println("student 1 teacher evaluation : "+teacher.getStudentList().get("1").getMarks().get(0).isTeacher_evaluation());
 			request.getSession().setAttribute("teacher", teacher);
 			mv = new ModelAndView("viewStudents");
 		}else{			

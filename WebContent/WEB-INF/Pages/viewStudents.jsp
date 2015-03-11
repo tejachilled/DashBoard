@@ -51,8 +51,14 @@
 	padding: 5px;
 }
 </style>
+<script type="text/javascript">
+function Validate(){
+	var group = document.getElementById('groupid').value;
+	document.getElementById('finalGroup').value = group;
+}
+</script>
 <body bgcolor="#d9edf7">
-	<form action="/PeerTool/reviewWork" method="get">
+	<form action="/PeerTool/evaluateStudents" method="POST">
 		<div id="header">
 			<h1>Peer Review Tool</h1>
 		</div>
@@ -62,6 +68,18 @@
 		<br /> <br />
 		<h3 align="center">Please select a student to evaluate:</h3>
 		<div id="section">
+			<table align="center">
+				<tr>
+					<td> Select any group : </td>
+					<td><select name="groupid" id="groupid">
+							<c:forEach items="${teacher.groups}" var="group">
+								<option value="${group}">${group}</option>
+							</c:forEach>
+					</select></td> 
+					<td> <input type="hidden" id="finalGroup" name = "finalGroup"> 
+					<input type="submit" value="Go" onclick="return Validate()"> </td>
+				</tr>
+			</table>
 			<table align="center" border="1">
 				<tr>
 					<td></td>

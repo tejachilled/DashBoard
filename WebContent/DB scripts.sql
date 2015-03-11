@@ -14,14 +14,15 @@ user_id varchar(20) NOT null,
 assignment_id int,
 group_id varchar(10),
 assignment_name varchar(30),
-imagefile varchar(300),
+imagefile varchar(999),
 NoofImages int,
 content TEXT,
 link varchar(100),
 SUBMISSIONCOUNT int,
 submissionDate TIMESTAMP,
 wordcount int,
-charcount int
+charcount int,
+primary key(user_id,assignment_id,group_id)
 );
 
 
@@ -30,6 +31,17 @@ user_id varchar(20) NOT null, peer_id varchar(20) NOT NULL, count int DEFAULT 0,
 analysis int,design int,vc int,consistency int,aesthetic int, orginality int, tot int,
 analysis_text varchar(200), design_text varchar(200),clarity_text varchar(200),aesthetic_text varchar(200),orginality_text varchar(200),tot_text varchar(200)
 );
+
+drop table group_assign_review;
+
+create table group_assign_review(
+group_id VARCHAR(65) not null,
+assignment_id int,
+random_number int,
+submissioncount int,
+review_pannel varchar(50)
+);
+
 
 insert into user_table values('admin','admin','password','admin','rthutari@asu.edu','fall15');
 
@@ -42,4 +54,6 @@ submissioncount,submissionDate,wordcount,charcount
 from user_assignment where  (user_id,submissionDate) in
 (select user_id,max(submissionDate) from user_assignment  group by user_id) and  submissionDate > '2015-02-09 13:37:26'
 order by submissionDate asc limit 2;
+
+select distinct a.assignment_id  from group_assign_review a join user_assignment b where a.group_id = b.group_id and b.user_id ='1';
 

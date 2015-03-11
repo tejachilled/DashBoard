@@ -7,31 +7,31 @@
 <title>Peer Review Tool</title>
 </head>
 <script type="text/javascript">
-window.onload=function() {
-	   document.getElementById("vassignment").onclick=function() {
-	     var myForm = document.createElement("form");
-	     myForm.action=this.href;// the href of the link
-	     myForm.target="myFrame";
-	     myForm.method="POST";
-	     myForm.submit();
-	    return false; // cancel the actual link
-	   }
-	   document.getElementById("eassignment").onclick=function() {
-	     var myForm = document.createElement("form");
-	     myForm.action=this.href;// the href of the link
-	     myForm.target="myFrame";
-	     myForm.method="POST";
-	     myForm.submit();
-	    return false; // cancel the actual link
-	   }
-	 }
+	window.onload = function() {
+		document.getElementById("vassignment").onclick = function() {
+			var myForm = document.createElement("form");
+			myForm.action = this.href;// the href of the link
+			myForm.target = "myFrame";
+			myForm.method = "POST";
+			myForm.submit();
+			return false; // cancel the actual link
+		}
+		document.getElementById("eassignment").onclick = function() {
+			var myForm = document.createElement("form");
+			myForm.action = this.href;// the href of the link
+			myForm.target = "myFrame";
+			myForm.method = "POST";
+			myForm.submit();
+			return false; // cancel the actual link
+		}
+	}
 </script>
 <style>
 
 /*http://fc08.deviantart.net/fs24/f/2008/017/8/f/Library_page_background_by_WJD.jpg */
 body {
-background-image: url('http://svite-league-apps-content.s3.amazonaws.com/bgimages/wood.jpg');
-
+	background-image:
+		url('http://svite-league-apps-content.s3.amazonaws.com/bgimages/wood.jpg');
 	background-size: cover;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -39,18 +39,46 @@ background-image: url('http://svite-league-apps-content.s3.amazonaws.com/bgimage
 	margin: 0;
 	padding: 0;
 }
-h1 {color: white;}
 
+h1 {
+	color: white;
+}
 </style>
-<body >
-<br/><br/>
+<body>
+	<br />
+	<br />
+
 	<h1 align="center">${headermsg}</h1>
-	<h4 align="right">  user: ${student.username}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </h4>
-	<br/><br/><br/><br/>
-	<h3 align="center">To submit your Assignment - <a href="/PeerTool/submitwork">Click here</a></h3>
-	<h3 align="center">To evaluate peer's Assignment - <a href="/PeerTool/eassignment" id="eassignment">Click here</a></h3>
-	<h3 align="center">To view your Assignment - <a href="/PeerTool/vassignment" id="vassignment">Click here</a></h3>
-	<br/>
+	<h1 align="right">
+		<img src="/WebContent/WEB-INF/images/home.png" width="30"
+			onclick="submit();" />&nbsp;<img src="view.png" width="30">&nbsp;<img
+			src="self.png" width="30">
+	</h1>
+	<h4 align="right">user:
+		${student.username}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</h4>
+	<table align="center">
+		<tr>
+			<td><h2>Please select from below :</h2></td>
+		</tr>
+		<tr>
+			<td>
+				<form action="/PeerTool/studentPage" method="post">
+					1)&nbsp;&nbsp;<input type="submit" value="Submit/View assignment">
+				</form>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<form action="/PeerTool/eassignment" method="post">
+					2)&nbsp;&nbsp;<input type="submit"
+						value="Evaluate peer's assignment">
+				</form>
+			</td>
+		</tr>
+	</table>
+
+	<br />
 	<h4 align="center">${uploadmsg}</h4>
 </body>
 </html>

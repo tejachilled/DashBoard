@@ -283,7 +283,7 @@ function permission(str){
 						</tr>
 						<tr>
 							<td>
-							Data analysis (30%)
+							Data analysis (30)
 							</td>
 							<td>
 								<input type="text" style="width: 50px;" id="da1" name="da1" value="" readonly="readonly">
@@ -293,7 +293,7 @@ function permission(str){
 							</td>
 						</tr>
 						<tr>
-							<td>Rationales of visualization design and story (30%)</td>
+							<td>Rationales of visualization design and story (30)</td>
 							<td>
 							 	<input type="text" style="width: 50px;" id="ra1" name="ra1" readonly="readonly">
 							</td>
@@ -302,7 +302,7 @@ function permission(str){
 							</td>
 						</tr>
 						<tr>
-							<td>Visualization clarity (10%)</td>
+							<td>Visualization clarity (10)</td>
 							<td>
 							<input type="text" style="width: 50px;" id="ca1" name="ca1" value="2" >
 							</td>
@@ -311,7 +311,7 @@ function permission(str){
 							</td>
 						</tr>
 						<tr>
-							<td>Consistency (5%)</td>
+							<td>Consistency (5)</td>
 							<td>
 							<input type="text" style="width: 50px;" id="con1" name="con1" readonly="readonly">
 							</td>
@@ -320,7 +320,7 @@ function permission(str){
 							</td>
 						</tr>
 						<tr>
-							<td>Aesthetic (10%)</td>
+							<td>Aesthetic (10)</td>
 							<td>
 							<input type="text" style="width: 50px;" id="as1" name="as1" readonly="readonly">
 							</td>
@@ -330,7 +330,7 @@ function permission(str){
 						</tr>	
 						
 							<tr>
-							<td>Originality (15%)</td>
+							<td>Originality (15)</td>
 							<td>
 								<input type="text" style="width: 50px;" id="org1" name="org1" readonly="readonly">
 							</td>

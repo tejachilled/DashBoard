@@ -134,7 +134,7 @@ public class Database {
 		if(count ==0) return false;
 		return true;
 	}
-	private static BeanClass TeacherInfo(BeanClass student) throws SQLException {
+	public static BeanClass TeacherInfo(BeanClass student) throws SQLException {
 		// TODO Auto-generated method stub
 		if(conn==null || conn.isClosed())GetConnection();
 		ArrayList<String> al = new ArrayList<String>();
@@ -145,6 +145,7 @@ public class Database {
 			while(rs.next()){
 				String key = rs.getString("group_id");
 				System.out.println("key: "+key);
+				if(key != null)
 				al.add(key);
 			}
 			ps.close();
@@ -160,46 +161,113 @@ public class Database {
 
 		return student;
 	}
+	public static BeanTeacher GetGroups(BeanTeacher teacher) throws SQLException {
+		// TODO Auto-generated method stub
+		if(conn==null || conn.isClosed())GetConnection();
+		ArrayList<String> al = new ArrayList<String>();
+		String sqlQuery = "select  distinct group_id  from user_table";
+		try {
+			Statement ps = conn.createStatement();
+			ResultSet rs = ps.executeQuery(sqlQuery);
+			while(rs.next()){
+				String key = rs.getString("group_id");
+				System.out.println("key: "+key);
+				if(key !=null)
+				al.add(key);
+			}
+			ps.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{		
+			conn.close();
+		}
+		if(al.size()>0){
+			teacher.setGroups(al);
+		}
+
+		return teacher;
+	}
 	public static BeanClass UserDataUploadtoDB(BeanClass student) throws SQLException {
 		// TODO Auto-generated method stub
 		if(conn==null || conn.isClosed())GetConnection();
-		int count = getCount(student.getUsername());
+		int count = getCount(student);
+		int maxCount =getMaxCount(student);
 		student.setCount(count);
 		java.sql.Timestamp date = new java.sql.Timestamp(new java.util.Date().getTime());
 		System.out.println("todays date is : "+date);
 		System.out.println("No of Submissions: "+count);
-		if(count<=50){
-			String sqlQuery = "INSERT INTO USER_ASSIGNMENT(USER_ID,IMAGEFILE,CONTENT,LINK,SUBMISSIONCOUNT,SUBMISSIONDATE,NOOFIMAGES,WORDCOUNT,CHARCOUNT,group_id) VALUES(?,?,?,?,?,?,?,?,?,?)";
-			PreparedStatement ps = conn.prepareStatement(sqlQuery);
-			ps.setString(1, student.getUsername());
-			ps.setString(2, student.getImagefile());
-			ps.setString(3, student.getFullContext());
-			ps.setString(4, student.getLink());
-			ps.setInt(5, count+1);
-			ps.setTimestamp(6, date);
-			ps.setInt(7, student.getImagesNumber());
-			ps.setInt(8, student.getWordCount());
-			ps.setInt(9, student.getCharCount());
-			ps.setString(10, student.getGroup_id());
-			ps.executeUpdate();
-			student.setSubmission_date(""+date);
-			System.out.println("Inserted a record into DB");
-			ps.close();
+		String sqlQuery = "";
+		PreparedStatement ps = conn.prepareStatement(sqlQuery);
+		if(maxCount - count >=0){
+			if(IsExist(student)){
+				sqlQuery = "update user_assignment set IMAGEFILE=?,CONTENT=?,LINK=?,SUBMISSIONCOUNT=?,SUBMISSIONDATE=?,NOOFIMAGES=?,WORDCOUNT=?,CHARCOUNT=? WHERE USER_ID = ? and assignment_id = ? and group_id = ?";
+				ps.setString(1, student.getImagefile());
+				ps.setString(2, student.getFullContext());
+				ps.setString(3, student.getLink());
+				ps.setInt(4, count+1);
+				ps.setTimestamp(5, date);
+				ps.setInt(6, student.getImagesNumber());
+				ps.setInt(7, student.getWordCount());
+				ps.setInt(8, student.getCharCount());
+				ps.setString(9, student.getUsername());
+				ps.setInt(10, Integer.parseInt(student.getAssignment_id()));
+				ps.setString(11, student.getGroup_id());				
+				ps.executeUpdate();
+				student.setSubmission_date(""+date);
+				System.out.println("updated a record into DB");
+				
+			}else{
+				sqlQuery = "INSERT INTO USER_ASSIGNMENT(USER_ID,IMAGEFILE,CONTENT,LINK,SUBMISSIONCOUNT,SUBMISSIONDATE,NOOFIMAGES,WORDCOUNT,CHARCOUNT,group_id,assignment_id) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+				ps.setString(1, student.getUsername());
+				ps.setString(2, student.getImagefile());
+				ps.setString(3, student.getFullContext());
+				ps.setString(4, student.getLink());
+				ps.setInt(5, count+1);
+				ps.setTimestamp(6, date);
+				ps.setInt(7, student.getImagesNumber());
+				ps.setInt(8, student.getWordCount());
+				ps.setInt(9, student.getCharCount());
+				ps.setString(10, student.getGroup_id());
+				ps.setInt(11, Integer.parseInt(student.getAssignment_id()));
+				ps.executeUpdate();
+				student.setSubmission_date(""+date);
+				System.out.println("Inserted a record into DB");
+				
+			}
 		}
-
+		ps.close();
 		conn.close();
 		System.out.println("Disconnected from database");
 		return student;
 	}
 
-	public static int getCount(String uid) throws SQLException{
-		String sqlQuery = "SELECT SUBMISSIONCOUNT FROM USER_ASSIGNMENT WHERE USER_ID = ?";
+
+
+	public static int getCount(BeanClass student) throws SQLException{
+		String sqlQuery = "SELECT SUBMISSIONCOUNT FROM USER_ASSIGNMENT WHERE USER_ID = ? and assignment_id = ? and group_id = ?";
 		int count = 0;
 		PreparedStatement ps = conn.prepareStatement(sqlQuery);
-		ps.setString(1, uid);
+		ps.setString(1, student.getUsername());
+		ps.setInt(2, Integer.parseInt(student.getAssignment_id()));
+		ps.setString(3,student.getGroup_id());
 		ResultSet rs = ps.executeQuery();
 		while(rs.next()){
 			count = rs.getInt("SUBMISSIONCOUNT");
+		}
+
+		return count;
+	}
+	private static int getMaxCount(BeanClass student) throws SQLException {
+		// TODO Auto-generated method stub
+		String sqlQuery = "SELECT submissioncount FROM group_assign_review WHERE  assignment_id = ? and group_id = ?";
+		int count = 0;
+		PreparedStatement ps = conn.prepareStatement(sqlQuery);
+		ps.setInt(2, Integer.parseInt(student.getAssignment_id()));
+		ps.setString(3,student.getGroup_id());
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			count = rs.getInt("submissioncount");
 		}
 
 		return count;
@@ -232,6 +300,99 @@ public class Database {
 		conn.close();
 		return student;
 	}
+	
+	public static BeanTeacher SaveNewGroup(BeanTeacher teacher, String[] students) throws SQLException {
+		try {
+			if(conn==null || conn.isClosed()) GetConnection();
+			StringBuffer sqlQuery = new StringBuffer();
+			sqlQuery.append("update user_table set group_id = ? ");
+			sqlQuery.append(" where user_id in ( ");
+			for(int i =0;i<students.length-1;i++){
+				sqlQuery.append("?");sqlQuery.append(",");
+			}
+			sqlQuery.append("?");
+			sqlQuery.append(" )");
+			System.out.println("GetStudentsInfo statement: "+sqlQuery.toString());
+			PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());
+			ps.setString(1, teacher.getGroupid());
+			for(int i =0,j=2;i<students.length;i++,j++){
+				ps.setString(j, students[i]);
+			}
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			conn.close();
+		}
+
+		return teacher;
+	}
+	public static BeanTeacher GetAllStudents(BeanTeacher teacher) throws SQLException {
+		// TODO Auto-generated method stub
+		ArrayList<BeanClass> allStudents = new ArrayList<BeanClass>();
+		try {
+			if(conn==null || conn.isClosed()) GetConnection();
+			StringBuffer sqlQuery = new StringBuffer();
+			sqlQuery.append("select * from user_table where role = ? ");
+			sqlQuery.append(" group by user_id");
+			BeanClass student;
+			System.out.println("GetStudentsInfo statement: "+sqlQuery.toString());
+			PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());
+			ps.setString(1, "student");
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()){
+				student = new BeanClass();
+				student.setUsername(rs.getString("USER_ID"));
+				student.setFullName(rs.getString("UNAME"));
+				student.setGroup_id(rs.getString("GROUP_ID"));
+				allStudents.add(student);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			if(allStudents.size()>0){
+				teacher.setAllStudents(allStudents);
+			}
+			conn.close();
+		}
+
+		return teacher;
+	}
+	/*public static BeanTeacher GetGroupStudents(BeanTeacher teacher) throws SQLException {
+		// TODO Auto-generated method stub
+		ArrayList<BeanClass> gStudents = new ArrayList<BeanClass>();
+		try {
+			if(conn==null || conn.isClosed()) GetConnection();
+			StringBuffer sqlQuery = new StringBuffer();
+			sqlQuery.append("select * from user_table where role = ? and group_id = ? ");
+			sqlQuery.append(" group by user_id");
+			BeanClass student;
+			System.out.println("GetStudentsInfo statement: "+sqlQuery.toString());
+			PreparedStatement ps = conn.prepareStatement(sqlQuery.toString());
+			ps.setString(1, "student");
+			ps.setString(1, teacher.getGroupid());
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()){
+				student = new BeanClass();
+				student.setUsername(rs.getString("USER_ID"));
+				student.setFullName(rs.getString("UNAME"));
+				gStudents.add(student);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			if(gStudents.size()>0){
+				teacher.setAllStudents(gStudents);
+			}
+			conn.close();
+		}
+
+		return teacher;
+	}
+*/
 
 	public static BeanTeacher GetStudentsInfo(BeanTeacher teacher) throws SQLException {
 		// TODO Auto-generated method stub
@@ -373,6 +534,26 @@ public class Database {
 		}
 
 	}
+	private static boolean IsExist(BeanClass student) throws SQLException {
+		// TODO Auto-generated method stub
+		PreparedStatement ps = null;
+		StringBuffer sb = new StringBuffer();
+		try {
+			if(conn==null || conn.isClosed()) GetConnection();
+			sb.append("select * from user_assignment where user_id = ? and assignment_id = ? and group_id = ?");
+			ps = conn.prepareStatement(sb.toString());
+			ps.setString(1, student.getUsername());			
+			ps.setInt(2, Integer.parseInt(student.getAssignment_id()));
+			ps.setString(3, student.getGroup_id());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return true;
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
+	}
 
 	private static boolean CheckPeerTable(String peerId, String reviewerId) throws SQLException {
 		// TODO Auto-generated method stub
@@ -407,6 +588,84 @@ public class Database {
 			count = rs.getInt(1);
 		}
 		return count;
+	}
+
+	public static BeanTeacher InsertReviewPannel(BeanTeacher teacher) {
+		// TODO Auto-generated method stub
+		String tableName = teacher.getGroupid()+"_"+teacher.getAssignment_id();
+
+		if(updateCheck_ReviewPannel(teacher)){
+			String sqlQuery = "update group_assign_review  set random_number=?,submissioncount=?,review_pannel=? where group_id = ? and assignment_id = ?";
+			PreparedStatement ps = null;
+			try {
+				if(conn==null || conn.isClosed()) GetConnection();
+				ps = conn.prepareStatement(sqlQuery);
+				ps.setInt(1, teacher.getRandomNumber());
+				ps.setInt(2, teacher.getSubmissionCount());
+				StringBuffer sb = getReviewContent(teacher);
+				ps.setString(3, sb.toString());
+				ps.setString(4, teacher.getGroupid());
+				ps.setInt(5, teacher.getAssignment_id());
+				ps.executeUpdate();
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else{
+			String sqlQuery = "INSERT INTO group_assign_review(group_id,assignment_id,random_number,submissioncount,review_pannel) values(?,?,?,?,?)";
+			int count =0;
+			PreparedStatement ps = null;
+			try {
+				if(conn==null || conn.isClosed()) GetConnection();
+				ps = conn.prepareStatement(sqlQuery);
+				ps.setString(1, teacher.getGroupid());
+				ps.setInt(2, teacher.getAssignment_id());
+				ps.setInt(3, teacher.getRandomNumber());
+				ps.setInt(4, teacher.getSubmissionCount());
+
+				StringBuffer sb = getReviewContent(teacher);
+				ps.setString(5, sb.toString());
+				ps.executeUpdate();
+
+
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return teacher;
+	}
+
+
+	private static StringBuffer getReviewContent(BeanTeacher teacher) {
+		// TODO Auto-generated method stub
+		StringBuffer sb = new StringBuffer();
+		for(OperationParameters ops : teacher.getOperationParameterses()){
+			sb.append(ops.getCriteria());sb.append(",");sb.append(ops.getWeight());
+			sb.append(",");
+		}
+		return sb;
+	}
+	private static boolean updateCheck_ReviewPannel(BeanTeacher teacher) {
+		// TODO Auto-generated method stub
+		String sqlQuery = "select * from group_assign_review where group_id = ? and assignment_id = ?";
+		int count =0;
+		PreparedStatement ps = null;
+		try {
+			if(conn==null || conn.isClosed()) GetConnection();
+			ps = conn.prepareStatement(sqlQuery);
+			ps.setString(1, teacher.getGroupid());
+			ps.setInt(2, teacher.getAssignment_id());
+			ResultSet rs = ps.executeQuery();
+			if(rs.next()) return true;
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return false;
 	}
 	public static HashMap<String, BeanClass> GetPeerInfo(BeanClass student) throws SQLException {
 		HashMap<String, BeanClass> map = new HashMap<String, BeanClass>();
@@ -483,6 +742,26 @@ public class Database {
 		return map;
 	}
 
+	public static ArrayList<String> getAssignmentIds(BeanClass student) throws SQLException {
+		// TODO Auto-generated method stub
+		ArrayList<String> list= new ArrayList<String>();
+		PreparedStatement ps = null;
+		try {
+			if(conn==null || conn.isClosed()) GetConnection();
+			StringBuffer sb = new StringBuffer();
+			sb.append("select distinct a.assignment_id  from group_assign_review a join user_table b where a.group_id = b.group_id and b.user_id =?");
+			ps = conn.prepareStatement(sb.toString());
+			ps.setString(1, student.getUsername());
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()){
+				list.add(rs.getString("assignment_id"));
+			}
+		}finally{
+			ps.close(); conn.close();
+		}		
+		return list;
+	}
+
 
 	private static BeanClass getSubmissionDate(BeanClass student) throws SQLException {
 		// TODO Auto-generated method stub
@@ -529,20 +808,20 @@ public class Database {
 
 		try {
 
-			input = new FileInputStream("C:/Users/tejj/Desktop/PeerTool/PeerTool/WebContent/WEB-INF/constants.properties");
+			input = new FileInputStream(Login.CONSTANT_FILE_PATH);
 			if(input==null) System.out.println("nullllllllll values");
 			// load a properties file
 			prop.load(input);
 
 			// get the property value and print it out
-			url = prop.getProperty("url");
-			dbName = prop.getProperty("dbName");
-			driver = prop.getProperty("driver");
-			userName= prop.getProperty("userName");
-			password =prop.getProperty("password");
-			student = prop.getProperty("password");
-			ta= prop.getProperty("ta");
-			teacher = prop.getProperty("teacher");
+			url = getValues("url");
+			dbName = getValues("dbName");
+			driver = getValues("driver");;
+			userName= getValues("userName");
+			password =getValues("password");
+			student = getValues("student");
+			ta= getValues("ta");
+			teacher = getValues("teacher");
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -569,7 +848,20 @@ public class Database {
 		}
 
 	}
-
+	public static String getValues(String inp) throws IOException{
+		Properties prop = new Properties();
+		InputStream input = new FileInputStream(Login.CONSTANT_FILE_PATH);
+		if(input==null) System.out.println("nullllllllll values in review class");
+		// load a properties file
+		prop.load(input);
+		if(prop.get(inp)!=null){
+			String value = ""+ prop.get(inp);
+			return value ;
+		}
+		return null;
+	}
+	
+	
 
 
 

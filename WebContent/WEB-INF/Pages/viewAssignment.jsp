@@ -223,7 +223,7 @@ html, body{
 </script>
 <body style="height: 100%;" onload="validate();">
 	<form action="/PeerTool/WelcomePage" method="post" >
-	<h1 align="center">${headermsg} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="home.png" width="30" onclick="submit();">&nbsp;<img src="view.png" width="30">&nbsp;<img src="self.png" width="30"></h1>
+	<h1 align="center">${headermsg} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="C:/Users/tejj/Desktop/PeerTool/PeerTool/WebContent/WEB-INF/resources/home.png" width="30" onclick="submit();">&nbsp;<img src="view.png" width="30">&nbsp;<img src="self.png" width="30"></h1>
 	<br/>
 	<div>
 		<div class="left_div" >
@@ -265,7 +265,7 @@ html, body{
  </div> 
 	<br/>
 
-	<table border="1" width="60%" align="right" id="mainTable">
+	<table border="1" width="60%" align="center" id="mainTable">
 			<tr>
 				<td align="center"><big>Review</big> </td>
 			</tr>
@@ -278,7 +278,7 @@ html, body{
 						</tr>
 						<tr>
 							<td>
-							Data analysis (30%)
+							Data analysis (30)
 							</td>
 							<td>
 								<input type="text" style="width: 50px;" id="da1" name="da1" value="30" readonly="readonly">
@@ -288,7 +288,7 @@ html, body{
 							</td>
 						</tr>
 						<tr>
-							<td>Rationales of visualization design and story (30%)</td>
+							<td>Rationales of visualization design and story (30)</td>
 							<td>
 							 	<input type="text" style="width: 50px;" id="ra1" name="ra1" readonly="readonly">
 							</td>
@@ -297,7 +297,7 @@ html, body{
 							</td>
 						</tr>
 						<tr>
-							<td>Visualization clarity (10%)</td>
+							<td>Visualization clarity (10)</td>
 							<td>
 							<input type="text" style="width: 50px;" id="ca1" name="ca1" value="2" >
 							</td>
@@ -306,7 +306,7 @@ html, body{
 							</td>
 						</tr>
 						<tr>
-							<td>Consistency (5%)</td>
+							<td>Consistency (5)</td>
 							<td>
 							<input type="text" style="width: 50px;" id="con1" name="con1" readonly="readonly">
 							</td>
@@ -315,7 +315,7 @@ html, body{
 							</td>
 						</tr>
 						<tr>
-							<td>Aesthetic (10%)</td>
+							<td>Aesthetic (10)</td>
 							<td>
 							<input type="text" style="width: 50px;" id="as1" name="as1" readonly="readonly">
 							</td>
@@ -325,7 +325,7 @@ html, body{
 						</tr>	
 						
 							<tr>
-							<td>Originality (15%)</td>
+							<td>Originality (15)</td>
 							<td>
 								<input type="text" style="width: 50px;" id="org1" name="org1" readonly="readonly">
 							</td>
