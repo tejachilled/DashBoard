@@ -21,6 +21,12 @@
 			alert('Please upload proper zip file');
 			return false;
 		}
+		
+		var count = ${student.count}
+		if(count ==0){
+			alert('Number of submissions reached max!');
+			return false;
+		}
 	}
 </script>
 <style>
@@ -35,16 +41,48 @@
 }
 
 body {
-	background-image: url('http://crunchify.com/bg.png');
+	background-image: url('${pageContext.request.contextPath}/resources/bg.png');
+}
+#header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	width: 100%;
+	padding: 5px;
+}
+
+#section {
+	padding: 10px;
+	background-color: #d9edf7;
+}
+
+#footer {
+	background-color: black;
+	color: white;
+	clear: both;
+	position: fixed;
+	text-align: center;
+	bottom: 0;
+	width: 100%;
 }
 </style>
 </head>
 <body>
+<div id="header">
+		<h1>${headermsg}</h1>
+</div>
+<h4 align="right">
+		user: ${student.username} <a href="/PeerTool/Welcome"> <img
+			src="${pageContext.request.contextPath}/resources/home.png"
+			width="30">
+		</a> <a href="/PeerTool/logout"> <img
+			src="${pageContext.request.contextPath}/resources/logout.png"
+			width="30">
+		</a>
+	</h4>
 	<form method="post" action="/PeerTool/upload" enctype="multipart/form-data">
-		<h1 align="center">${headermsg}</h1>
-
-		<h4 align="right">User: ${student.username}</h4>
-		<h4 align="center">Number of submissions left: 2</h4>
+		
+		<h4 align="center">Number of submissions left: ${student.count } </h4>
 		<br /> <br />
 		<div id="msg">
 			<table align="center">
@@ -68,6 +106,6 @@ body {
 		<h4 align="center">${uploadmsg}</h4>
 		
 	</form>
-
+<div id="footer">Copyright © Arizona State University</div>
 </body>
 </html>

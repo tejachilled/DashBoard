@@ -2,7 +2,10 @@ package com.peer.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import org.apache.commons.collections.FactoryUtils;
+import org.apache.commons.collections.list.LazyList;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class BeanClass {
@@ -27,8 +30,15 @@ public class BeanClass {
 	private String fullContext;
 	private ArrayList<String> images;
 	private ArrayList<String> groups;
-	private ArrayList<BeanMarks> marks;
+	private double totMarks;
+	private double average;
+	private ArrayList<OperationParameters> toDisplay;
 	private HashMap<String, BeanClass> peerList;
+	private ArrayList<OperationParameters> reviewCriteria;
+	private ArrayList<OperationParameters> teacherMarks;
+	private ArrayList<Integer> studentTotMarks;
+	private int teacherTotMarks;
+	private int randomNumber;
 	
 	public String getAssignment_name() {
 		return assignment_name;
@@ -179,14 +189,6 @@ public class BeanClass {
 		return groups;
 	}
 
-	public ArrayList<BeanMarks> getMarks() {
-		return marks;
-	}
-
-	public void setMarks(ArrayList<BeanMarks> marks) {
-		this.marks = marks;
-	}
-
 	public void setGroups(ArrayList<String> groups) {
 		this.groups = groups;
 	}
@@ -206,5 +208,70 @@ public class BeanClass {
 	public void setPeerList(HashMap<String, BeanClass> peerList) {
 		this.peerList = peerList;
 	}
+
+	public ArrayList<OperationParameters> getReviewCriteria() {
+		return reviewCriteria;
+	}
+
+	public void setReviewCriteria(ArrayList<OperationParameters> reviewCriteria) {
+		this.reviewCriteria = reviewCriteria;
+	}
+
+	public ArrayList<OperationParameters> getToDisplay() {
+		return toDisplay;
+	}
+
+	public void setToDisplay(ArrayList<OperationParameters> toDisplay) {
+		this.toDisplay = toDisplay;
+	}
+
+	public ArrayList<OperationParameters> getTeacherMarks() {
+		return teacherMarks;
+	}
+
+	public void setTeacherMarks(ArrayList<OperationParameters> teacherMarks) {
+		this.teacherMarks = teacherMarks;
+	}
+
+	public ArrayList<Integer> getStudentTotMarks() {
+		return studentTotMarks;
+	}
+
+	public void setStudentTotMarks(ArrayList<Integer> studentTotMarks) {
+		this.studentTotMarks = studentTotMarks;
+	}
+
+	public int getTeacherTotMarks() {
+		return teacherTotMarks;
+	}
+
+	public void setTeacherTotMarks(int teacherTotMarks) {
+		this.teacherTotMarks = teacherTotMarks;
+	}
+
+	public double getTotMarks() {
+		return totMarks;
+	}
+
+	public void setTotMarks(double totMarks) {
+		this.totMarks = totMarks;
+	}
+
+	public double getAverage() {
+		return average;
+	}
+
+	public void setAverage(double average) {
+		this.average = average;
+	}
+
+	public int getRandomNumber() {
+		return randomNumber;
+	}
+
+	public void setRandomNumber(int randomNumber) {
+		this.randomNumber = randomNumber;
+	}
+
 
 }

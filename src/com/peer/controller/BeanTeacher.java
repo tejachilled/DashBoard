@@ -17,6 +17,7 @@ public class BeanTeacher {
 	private int assignment_id;
 	private int submissionCount;
 	private ArrayList<String> groups;
+	private ArrayList<String> assignids;
 	private ArrayList<BeanClass> allStudents;
 	private List<OperationParameters> operationParameterses = LazyList.decorate(new ArrayList<OperationParameters>(),FactoryUtils.instantiateFactory(OperationParameters.class));
 	public List<OperationParameters> getOperationParameterses() {
@@ -73,6 +74,13 @@ public class BeanTeacher {
 	}
 	public void setAllStudents(ArrayList<BeanClass> allStudents) {
 		this.allStudents = allStudents;
+	}
+
+	public ArrayList<String> getAssignids() {
+		return assignids;
+	}
+	public void setAssignids(ArrayList<String> assignids) {
+		this.assignids = assignids;
 	}
 
 }

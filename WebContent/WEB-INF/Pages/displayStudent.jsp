@@ -24,7 +24,7 @@
 	background-color: black;
 	color: white;
 	clear: both;
-	position: absolute;
+	position: fixed;
 	text-align: center;
 	bottom: 0;
 	width: 100%;
@@ -44,11 +44,11 @@
 
 		} else {
 			var size = '${listSize}';
-			if (size == 0)
+			if (size == 0) {
 				alert('Please contact admin!');
-			else {
+				return false;
+			}else {
 				var list = '${list}';
-				alert(list.length);
 				alert('Please select an assignment');
 			}
 			return false;
@@ -62,9 +62,14 @@
 	<div id="header">
 		<h1>Peer Review Tool</h1>
 	</div>
-	<br />
-	<h4 align="right">user:
-		${student.username}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<h4 align="right">
+		user: ${student.username} <a href="/PeerTool/Welcome"> <img
+			src="${pageContext.request.contextPath}/resources/home.png"
+			width="30">
+		</a> <a href="/PeerTool/logout"> <img
+			src="${pageContext.request.contextPath}/resources/logout.png"
+			width="30">
+		</a>
 	</h4>
 	<h3 align="center">${headermsg}</h3>
 	<div id="section">
@@ -80,7 +85,7 @@
 			<tr>
 				<td>
 					<form action="/PeerTool/submitwork" method="post">
-						1)&nbsp;&nbsp;<input type="submit" value="Submit Assignment"
+						 <strong>1)</strong>&nbsp;&nbsp;<input type="submit" value="Submit Assignment"
 							onclick="return validate();"> <input type="hidden"
 							id="aid1" />
 					</form>
@@ -89,7 +94,7 @@
 			<tr>
 				<td>
 					<form action="/PeerTool/vassignment" method="post">
-						2)&nbsp;&nbsp;<input type="submit" value="View Assignment"
+						 <strong>2)</strong>&nbsp;&nbsp;<input type="submit" value="View Assignment"
 							onclick="return validate();"> <input type="hidden"
 							id="aid2" />
 					</form>

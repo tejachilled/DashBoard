@@ -1,11 +1,34 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>View Assignment</title>
 <style type="text/css" media="screen">
 /* Tabbed example */
+#header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	width: 100%;
+	padding: 5px;
+}
+
+#section {
+	padding: 10px;
+	background-color: #d9edf7;
+}
+
+#footer {
+	background-color: black;
+	color: white;
+	clear: both;
+	text-align: center;
+	bottom: 0;
+	width: 100%;
+	position: fixed;
+}
 div.tabs {
   min-height: 29em;		/* No height: can grow if :target doesn't work */
   position: relative;		/* Establish a containing block */
@@ -168,63 +191,26 @@ html, body{
 }
 </style>
 </head>
-<script>
-	function submit() {
-		var myForm = document.getElementById("form");
-		myForm.submit();
-	}
-
-	function validate(){		
-		var tMarks = '${marks1}';
-		//alert(tMarks.length);
-		if(tMarks!=null){
-			if(tMarks.length>5){
-				permission('1');permission('2');permission('3');
-			}
-			else{				
-				document.getElementById('mainTable').style.display = 'none';
-				document.getElementById('table1').style.display = 'none';
-				document.getElementById('table2').style.display = 'none';
-				document.getElementById('table3').style.display = 'none';
-			}
-		} else{
-			document.getElementById('mainTable').style.display = 'none';
-			document.getElementById('table1').style.display = 'none';
-			document.getElementById('table2').style.display = 'none';
-			document.getElementById('table3').style.display = 'none';
-		}
-	}
-	function permission(str){		
-		if(str==1){
-			document.getElementById('da'+str).value = '${marks1.analysis}';
-			document.getElementById('ra'+str).value = '${marks1.design}';
-			document.getElementById('ca'+str).value = '${marks1.vc}';
-			document.getElementById('con'+str).value = '${marks1.consistency}';
-			document.getElementById('as'+str).value = '${marks1.aesthetic}';
-			document.getElementById('org'+str).value = '${marks1.orginality}';	
-		}else if(str==2){
-			document.getElementById('da'+str).value = '${marks2.analysis}';
-			document.getElementById('ra'+str).value = '${marks2.design}';
-			document.getElementById('ca'+str).value = '${marks2.vc}';
-			document.getElementById('con'+str).value = '${marks2.consistency}';
-			document.getElementById('as'+str).value = '${marks2.aesthetic}';
-			document.getElementById('org'+str).value = '${marks2.orginality}';	
-		} else if(str==3){
-			document.getElementById('da'+str).value = '${marks3.analysis}';
-			document.getElementById('ra'+str).value = '${marks3.design}';
-			document.getElementById('ca'+str).value = '${marks3.vc}';
-			document.getElementById('con'+str).value = '${marks3.consistency}';
-			document.getElementById('as'+str).value = '${marks3.aesthetic}';
-			document.getElementById('org'+str).value = '${marks3.orginality}';	
-		}
-	}
-
-
-</script>
-<body style="height: 100%;" onload="validate();">
+<body style="height: 100%;" >
+<div id="header">
+		<h1>${headermsg}</h1>
+</div>
+<h4 align="right">
+		user: ${student.username} <a href="/PeerTool/Welcome"> <img
+			src="${pageContext.request.contextPath}/resources/home.png"
+			width="30">
+		</a> <a href="/PeerTool/logout"> <img
+			src="${pageContext.request.contextPath}/resources/logout.png"
+			width="30">
+		</a>
+</h4>
+<c:if test="${ student.charCount eq 0  }">
+	<h3 align="center"> You didn't upload this assignment !</h3>
+	<div id="footer" style=" margin: 0 auto; position: absolute;">Copyright © Arizona State University</div>	
+</c:if>
+<c:if test="${ student.charCount gt 0  }">
 	<form action="/PeerTool/WelcomePage" method="post" >
-	<h1 align="center">${headermsg} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="C:/Users/tejj/Desktop/PeerTool/PeerTool/WebContent/WEB-INF/resources/home.png" width="30" onclick="submit();">&nbsp;<img src="view.png" width="30">&nbsp;<img src="self.png" width="30"></h1>
-	<br/>
+	
 	<div>
 		<div class="left_div" >
 			<center><b >Student Website</b></center>
@@ -236,8 +222,9 @@ html, body{
     <div class="tabs">
 
 <div id="tab0"> <a href="#tab0">Metadata</a>
-      <div>
-      Assignment1_JenniferTimm<Br><br>
+     <div>
+      Name : ${student.username }<br><br>
+      Assignment id:  ${student.assignment_id}<br><br>
       ${student.submission_date}<br><br>
       No of Images: ${student.imagesNumber}<br><br>
       ${student.charCount} characters<br><br>
@@ -264,220 +251,67 @@ html, body{
    </div>
  </div> 
 	<br/>
-
+<c:if test="${fn:length(student.teacherMarks) >0 }">
 	<table border="1" width="60%" align="center" id="mainTable">
 			<tr>
 				<td align="center"><big>Review</big> </td>
 			</tr>
 			<tr>
 				<td>
-				<div class="CSSTableGenerator" id="table1">
-					<table>
-						<tr>
-							<td colspan="3">Meta Reviewer: <font color="orange"><b>90</b></font></td>
-						</tr>
-						<tr>
-							<td>
-							Data analysis (30)
-							</td>
-							<td>
-								<input type="text" style="width: 50px;" id="da1" name="da1" value="30" readonly="readonly">
-							</td>
-							<td>
-								Thorough exploratory analysis.
-							</td>
-						</tr>
-						<tr>
-							<td>Rationales of visualization design and story (30)</td>
-							<td>
-							 	<input type="text" style="width: 50px;" id="ra1" name="ra1" readonly="readonly">
-							</td>
-							<td>
-							
-							</td>
-						</tr>
-						<tr>
-							<td>Visualization clarity (10)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="ca1" name="ca1" value="2" >
-							</td>
-							<td>
-							Love the icon. The vis title clearly highlight the results.
-							</td>
-						</tr>
-						<tr>
-							<td>Consistency (5)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="con1" name="con1" readonly="readonly">
-							</td>
-							<td>
-							
-							</td>
-						</tr>
-						<tr>
-							<td>Aesthetic (10)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="as1" name="as1" readonly="readonly">
-							</td>
-							<td>
-							Given the icon was added to improve the readability, but the bar chart is not particularly apprealling
-							</td>
-						</tr>	
-						
-							<tr>
-							<td>Originality (15)</td>
-							<td>
-								<input type="text" style="width: 50px;" id="org1" name="org1" readonly="readonly">
-							</td>
-							<td>
-								I don't understand the color selection.
-							</td>
-						</tr>					
-					</table>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<div class="CSSTableGenerator" id="table2">
-					<table>						
-						<tr>
-							<td colspan="3">Reviewer 1: <font color="orange"><b>85</b></font></td>
-						</tr>
-						<tr>
-							<td>
-							Data analysis (30%)
-							</td>
-							<td>
-								<input type="text" style="width: 50px;" id="da2" name="da2" value="30" readonly="readonly">
-							</td>
-							<td>
-								
-							</td>
-						</tr>
-						<tr>
-							<td>Rationales of visualization design and story (30%)</td>
-							<td>
-							 	<input type="text" style="width: 50px;" id="ra2" name="ra2" readonly="readonly">
-							</td>
-							<td>
-								Since it's analyzing Djokovic's success, maybe a picture of his rather than an icon will elevate the attention. Just a thought.
-							</td>
-						</tr>
-						<tr>
-							<td>Visualization clarity (10%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="ca2" name="ca2" value="2" >
-							</td>
-							<td>
-								It's very clear. 
-							</td>
-						</tr>
-						<tr>
-							<td>Consistency (5%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="con2" name="con2" readonly="readonly">
-							</td>
-							<td>
-								consistent coloring.
-							</td>
-						</tr>
-						<tr>
-							<td>Aesthetic (10%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="as2" name="as2" readonly="readonly">
-							</td>
-							<td>
-								Too simple.
-							</td>
-						</tr>	
-						
-							<tr>
-							<td>Originality (15%)</td>
-							<td>
-								<input type="text" style="width: 50px;" id="org2" name="org2" readonly="readonly">
-							</td>
-							<td>
-								Not particularly impressive visualization.
-							</td>
-						</tr>					
-					</table>
-					</div>
-				</td>
+				<c:set var="count" value="0" />
 				
-			</tr>
-			<tr>
-				<td bgcolor="#FFFFCC">
-					<div class="CSSTableGenerator" id="table3">
-					<table>
-						<tr>
-							<td colspan="3">Reviewer 2: <font color="orange"><b>92</b></font></td>
-						</tr>
-						<tr>
-							<td>
-							Data analysis (30%)
-							</td>
-							<td>
-								<input type="text" style="width: 50px;" id="da3" name="da3" value="30" readonly="readonly">
-							</td>
-							<td>
-								Very comprehensive exploratory analysis. Good call on not modeling data yet. 
-							</td>
-						</tr>
-						<tr>
-							<td>Rationales of visualization design and story (30%)</td>
-							<td>
-							 	<input type="text" style="width: 50px;" id="ra3" name="ra3" readonly="readonly">
-							</td>
-							<td>
-								Reference to reviewer 2. 
-							</td>
-						</tr>
-						<tr>
-							<td>Visualization clarity (10%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="ca3" name="ca3" value="2" >
-							</td>
-							<td>
-								Clear icon key improves visualization clarity.
-							</td>
-						</tr>
-						<tr>
-							<td>Consistency (5%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="con3" name="con3" readonly="readonly">
-							</td>
-							<td>
-								
-							</td>
-						</tr>
-						<tr>
-							<td>Aesthetic (10%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="as3" name="as3" readonly="readonly">
-							</td>
-							<td>
-								
-							</td>
-						</tr>	
-						
+				
+				<div class="CSSTableGenerator" id="table1">
+					<table >
 							<tr>
-							<td>Originality (15%)</td>
-							<td>
-								<input type="text" style="width: 50px;" id="org3" name="org3" readonly="readonly">
-							</td>
-							<td>
-								What would you do if bar charts are not allowed to use?
-							</td>
-						</tr>					
-					</table>
-					</div>
+								<td colspan="3"> Meta Reviewer <font color="orange">: ${student.teacherTotMarks } </font></td>
+							</tr>
+							<c:forEach var="ops" items="${student.toDisplay}"
+								varStatus="j">
+								<tr>
+									<td style="width: 20%;">${ops.criteria}</td>
+									<td style="width: 20%;"><input type="text"
+										style="width: 50px;" readonly="readonly"
+										value="${student.teacherMarks[j.index ].weight }"> /
+										${ops.weight }</td>
+									<td><input type="text" style="width: 500px;" readonly="readonly"
+										value="${student.teacherMarks[j.index ].criteria }">
+									</td>
+								</tr>
+							</c:forEach>
+					</table>	
+					<c:forEach begin="1" end="${fn:length(student.reviewCriteria)/2}" varStatus="i" >
+						<table >
+							<tr>
+								<td colspan="3"> Reviewer: ${i.index}  <font color="orange">: ${student.studentTotMarks[i.index-1] } </font></td>
+							</tr>
+							<c:forEach var="ops" items="${student.toDisplay}"
+								varStatus="j">
+								<tr>
+									<td style="width: 20%;">${ops.criteria}</td>
+									<td style="width: 20%;"><input type="text"
+										style="width: 50px;" id = "${count }" name= "${count }" readonly="readonly"
+										value="${student.reviewCriteria[count].weight }">/
+										${ops.weight }</td>
+											
+									<td><input type="text" style="width: 500px;" readonly="readonly" id = "${count }" name= "${count }"
+									value = "${student.reviewCriteria[count].criteria }">
+									<c:set var="count" value="${count + 1}" />
+									</td>
+								</tr>
+							</c:forEach>
+						</table>
+					</c:forEach>						
+				</div>
+				
 				</td>
 				
 			</tr>
 		</table>
-		
+	</c:if>	
 </form>
+<div id="footer">Copyright © Arizona State University</div>	
+</c:if>
 				
 
 </body>

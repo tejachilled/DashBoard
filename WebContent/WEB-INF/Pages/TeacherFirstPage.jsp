@@ -23,7 +23,7 @@
 	background-color: black;
 	color: white;
 	clear: both;
-	position: absolute;
+	position: fixed;
 	text-align: center;
 	bottom: 0;
 	width: 100%;
@@ -34,12 +34,17 @@
 	<div id="header">
 		<h1>Peer Review Tool</h1>
 	</div>
-	<br />
 	<h4 align="right">user:
-		${teacher.username}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			${teacher.username}
+		 <a href="/PeerTool/logout"> <img
+			src="${pageContext.request.contextPath}/resources/logout.png"
+			width="30">
+		</a>
 	</h4>
 	<input type="hidden" name ="username" value = "${teacher.username}">
 <h4 style="color: green" align="center">${customMsg}</h4>
+<h4 style="color: green" align="center">${customMsgGrp}</h4>
+
 	<div id="section">	
 		<table align="center">
 			<tr>
@@ -48,28 +53,28 @@
 			<tr>
 				<td>
 					<form action="/PeerTool/assign" method="post">
-						1)&nbsp;&nbsp;<input type="submit" value="Create Evaluation Criteria">
+						&nbsp;&nbsp;<input type="submit" value="Create/Modify Evaluation Criteria">
 					</form>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<form action="/PeerTool/groups" method="post">
-						2)&nbsp;&nbsp;<input type="submit" value="Create/Modify Groups">
+						&nbsp;&nbsp;<input type="submit" value="Create/Modify Groups">
 					</form>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<form action="/PeerTool/evaluateStudents" method="post">
-						3)&nbsp;&nbsp;<input type="submit" value="Evaluate Students">
+					<form action="/PeerTool/evaluateStudents1" method="post">
+						&nbsp;&nbsp;<input type="submit" value="Evaluate Students">
 					</form>
 				</td>
 			</tr>
 			<tr>
 				<td>
 					<form action="/PeerTool/register" method="post">
-						4)&nbsp;&nbsp;<input type="submit" value="Add Students">
+						&nbsp;&nbsp;<input type="submit" value="Add Students">
 					</form>
 				</td>
 			</tr>

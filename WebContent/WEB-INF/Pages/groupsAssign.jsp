@@ -23,7 +23,7 @@
 	background-color: black;
 	color: white;
 	clear: both;
-	position: absolute;
+	position: fixed;
 	text-align: center;
 	bottom: 0;
 	width: 100%;
@@ -34,9 +34,15 @@
 <div id="header">
 		<h1>Peer Review Tool</h1>
 	</div>
-	<br />
 	<h4 align="right">user:
-		${teacher.username}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			${teacher.username}
+		 <a href="/PeerTool/teacherfirst" > <img
+			src="${pageContext.request.contextPath}/resources/home.png"
+			width="30"> </a>	
+		 <a href="/PeerTool/logout"> <img
+			src="${pageContext.request.contextPath}/resources/logout.png"
+			width="30">
+		</a>
 	</h4>
 	<input type="hidden" name ="username" value = "${teacher.username}">
 <h4 style="color: green" align="center">${customMsg}</h4>

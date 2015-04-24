@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Evaluate Assignment</title>
@@ -163,77 +164,49 @@ html, body{
 </style>
 </head>
 <script>
-function display(str){		
-	if(str==1){
-		document.getElementById('da'+str).value = '${marks1.analysis}';
-		document.getElementById('ra'+str).value = '${marks1.design}';
-		document.getElementById('ca'+str).value = '${marks1.vc}';
-		document.getElementById('con'+str).value = '${marks1.consistency}';
-		document.getElementById('as'+str).value = '${marks1.aesthetic}';
-		document.getElementById('org'+str).value = '${marks1.orginality}';	
-	}else if(str==2){
-		document.getElementById('da'+str).value = '${marks2.analysis}';
-		document.getElementById('ra'+str).value = '${marks2.design}';
-		document.getElementById('ca'+str).value = '${marks2.vc}';
-		document.getElementById('con'+str).value = '${marks2.consistency}';
-		document.getElementById('as'+str).value = '${marks2.aesthetic}';
-		document.getElementById('org'+str).value = '${marks2.orginality}';	
-	} else if(str==3){
-		document.getElementById('da'+str).value = '${marks3.analysis}';
-		document.getElementById('ra'+str).value = '${marks3.design}';
-		document.getElementById('ca'+str).value = '${marks3.vc}';
-		document.getElementById('con'+str).value = '${marks3.consistency}';
-		document.getElementById('as'+str).value = '${marks3.aesthetic}';
-		document.getElementById('org'+str).value = '${marks3.orginality}';	
-	}
-}
-function validate(){
-	
-	var mode = '${mode}';
-	//alert(mode);
-	if(mode=='teacher'){
-		permission('1');
-		display('1');display('2');display('3');
-		var tMarks = '${marks1}';
+function validate(error) {
+		if(error == 1){
+			alert('Please give correct scores!');
+			return false;
+		}
 		
-	}else if(mode == 'student'){
-		var div1 = document.getElementById('table1');
-		var div2 = document.getElementById('table2');
-		div1.style.display = 'none';
-		div2.style.display = 'none';
-		permission('3');
-		display('3');
-	}
+		return true;
 }
-function permission(str){
-	document.getElementById('da'+str).removeAttribute('readonly');
-	document.getElementById('ra'+str).removeAttribute('readonly');
-	document.getElementById('ca'+str).removeAttribute('readonly');
-	document.getElementById('con'+str).removeAttribute('readonly');
-	document.getElementById('as'+str).removeAttribute('readonly');
-	document.getElementById('org'+str).removeAttribute('readonly');
-	document.getElementById('da'+str).name = 'analysis';
-	document.getElementById('ra'+str).name = 'design';
-	document.getElementById('ca'+str).name = 'vc';
-	document.getElementById('con'+str).name = 'consistency';
-	document.getElementById('as'+str).name = 'aesthetic';
-	document.getElementById('org'+str).name = 'orginality';	
-}
-
-	function submit() {
-		var myForm = document.getElementById("form");
-		myForm.submit();
+function onLoad(){
+	var i=0;
+	var teacherMark = '${peer.teacherTotMarks}';
+	var toDIsplaySize = '${fn:length(reviewer.reviewCriteria)}';
+	if(teacherMark >0 ){
+		for(i =0;i<toDIsplaySize;i++){
+			document.getElementById('operationParameterses['+i+'].weight').readOnly = true;
+			document.getElementById('operationParameterses['+i+'].criteria').readOnly = true;
+		}
 	}
+	return true;
+}
 
 </script>
-<body style="height: 100%;" onload="validate();">
+<body style="height: 100%;" onload="return onLoad();">
+	<div>
+	<h1 align="center">${headermsg}</h1>
+	<div align="right">user: ${reviewer.username}
+		<a href="/PeerTool/Welcome"> <img
+			src="${pageContext.request.contextPath}/resources/home.png"
+			width="30">
+		</a> <a href="/PeerTool/logout"> <img
+			src="${pageContext.request.contextPath}/resources/logout.png"
+			width="30">
+		</a>	
+	</div>
+</div>
+	
 	<form action="/PeerTool/saveMarks" method="post" >
-	<h1 align="center">${headermsg}</h1><br/>
-	<input type="hidden" name = "peerId" value="${student.username }">
+	<input type="hidden" name = "peerId" value="${peer.username }">
+	<h4 style="color: red" align="center">${customMsg}</h4>
 	<div>
 		<div class="left_div" >
-			<center><b >Student Website</b></center>
-			<object type="text/html" data="${student.link}" style="width: 100%; height: 100%; min-height: 30em;"> </object>
+			<center><b >peer Website</b></center>
+			<object type="text/html" data="${peer.link}" style="width: 100%; height: 100%; min-height: 30em;"> </object>
 		</div>
 			<div id="right_div">
 	<center><b>Summary Analytics</b></center><br/>
@@ -242,26 +215,27 @@ function permission(str){
 
 <div id="tab0"> <a href="#tab0">Metadata</a>
       <div>
-      Assignment1_JenniferTimm<Br><br>
-      ${student.submission_date}<br><br>
-      No of Images: ${student.imagesNumber}<br><br>
-      ${student.charCount} characters<br><br>
-      ${student.wordCount} words<br><br>
+      ${peer.username }<br><br>
+      Assignment id:  ${peer.assignment_id}<br><br>
+      ${peer.submission_date}<br><br>
+      No of Images: ${peer.imagesNumber}<br><br>
+      ${peer.charCount} characters<br><br>
+      ${peer.wordCount} words<br><br>
       </div>
      </div>
 	<input type="hidden" name = "mode" value="${mode}">
      <div id="tab2"> <a href="#tab2">Text </a>
-      <div><pre>${student.content}</pre></div>
+      <div><pre>${peer.content}</pre></div>
      </div>
 
      <div id="tab3"> <a href="#tab3">Image </a>
-      <div><c:forEach items="${student.images}" var="img">
+      <div><c:forEach items="${peer.images}" var="img">
 		<img src="${img}" style="width: 50%; height: 50%;"/><br/></c:forEach></div>
      </div>
 
      <div id="tab1" > <a href="#tab1">FullText</a>
       <div style="display: block; white-space:normal;"><pre>
-     <c:out value="${student.fullContext}"/></pre>
+     <c:out value="${peer.fullContext}"/></pre>
 </div>
      </div>
      </div>
@@ -269,219 +243,51 @@ function permission(str){
    </div>
  </div> 
 	<br/>
-
+<c:set var="error" value="0"/>
 	<table border="1" width="80%" align="center">
 			<tr>
-				<td align="center"><big>Review</big> </td>
+				<td align="center"><big>Review Pannel </big> </td>
 			</tr>
 			<tr>
 				<td>
 				<div class="CSSTableGenerator" id="table1">
-					<table >
-						<tr >
-							<td colspan="3">Meta Reviewer: <font color="orange"><b>90</b></font></td>
-						</tr>
-						<tr>
-							<td>
-							Data analysis (30)
-							</td>
-							<td>
-								<input type="text" style="width: 50px;" id="da1" name="da1" value="" readonly="readonly">
-							</td>
-							<td>
-								Thorough exploratory analysis.
-							</td>
-						</tr>
-						<tr>
-							<td>Rationales of visualization design and story (30)</td>
-							<td>
-							 	<input type="text" style="width: 50px;" id="ra1" name="ra1" readonly="readonly">
-							</td>
-							<td>
-							
-							</td>
-						</tr>
-						<tr>
-							<td>Visualization clarity (10)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="ca1" name="ca1" value="2" >
-							</td>
-							<td>
-							Love the icon. The vis title clearly highlight the results.
-							</td>
-						</tr>
-						<tr>
-							<td>Consistency (5)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="con1" name="con1" readonly="readonly">
-							</td>
-							<td>
-							
-							</td>
-						</tr>
-						<tr>
-							<td>Aesthetic (10)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="as1" name="as1" readonly="readonly">
-							</td>
-							<td>
-							Given the icon was added to improve the readability, but the bar chart is not particularly apprealling
-							</td>
-						</tr>	
-						
+						<table>
 							<tr>
-							<td>Originality (15)</td>
-							<td>
-								<input type="text" style="width: 50px;" id="org1" name="org1" readonly="readonly">
-							</td>
-							<td>
-								I don't understand the color selection.
-							</td>
-						</tr>					
-					</table>
-					</div>
+								<td colspan="3"> Reviewer: 1 <font color="orange"></font></td>
+							</tr>
+							<c:forEach var="ops" items="${reviewer.reviewCriteria}"
+								varStatus="j">
+								<tr>
+									<td style="width: 20%;">${ops.criteria}</td>
+									<td style="width: 20%;"><input type="text"
+										style="width: 50px;"
+										id="operationParameterses[${j.index }].weight"
+										name="operationParameterses[${j.index }].weight"
+										value="${peer.reviewCriteria[j.index ].weight }"> /
+										${ops.weight }</td>
+										<c:if test="${ops.weight - peer.reviewCriteria[j.index ].weight lt 0}" >
+											<c:set var="error" value="1"></c:set>
+											<c:if test="${ops.weight - peer.teacherMarks[j.index ].weight gt 0}" >
+												<c:set var="error" value="0"></c:set>
+											</c:if>
+										</c:if>
+										
+									<td><input type="text" style="width: 500px;"
+										id="operationParameterses[${j.index }].criteria"
+										name="operationParameterses[${j.index }].criteria"
+										value="${peer.reviewCriteria[j.index ].criteria }">
+									</td>
+								</tr>
+							</c:forEach>
+						</table>
+										
+				</div>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<div class="CSSTableGenerator" id="table2">
-					<table>						
-						<tr>
-							<td colspan="3">Reviewer 2: <font color="orange"><b>85</b></font></td>
-						</tr>
-						<tr>
-							<td>
-							Data analysis (30%)
-							</td>
-							<td>
-								<input type="text" style="width: 50px;" id="da2" name="da2" value="" readonly="readonly">
-							</td>
-							<td>
-								
-							</td>
-						</tr>
-						<tr>
-							<td>Rationales of visualization design and story (30%)</td>
-							<td>
-							 	<input type="text" style="width: 50px;" id="ra2" name="ra2" readonly="readonly">
-							</td>
-							<td>
-								Since it's analyzing Djokovic's success, maybe a picture of his rather than an icon will elevate the attention. Just a thought.
-							</td>
-						</tr>
-						<tr>
-							<td>Visualization clarity (10%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="ca2" name="ca2" value="2" >
-							</td>
-							<td>
-								It's very clear. 
-							</td>
-						</tr>
-						<tr>
-							<td>Consistency (5%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="con2" name="con2" readonly="readonly">
-							</td>
-							<td>
-								consistent coloring.
-							</td>
-						</tr>
-						<tr>
-							<td>Aesthetic (10%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="as2" name="as2" readonly="readonly">
-							</td>
-							<td>
-								Too simple.
-							</td>
-						</tr>	
-						
-							<tr>
-							<td>Originality (15%)</td>
-							<td>
-								<input type="text" style="width: 50px;" id="org2" name="org2" readonly="readonly">
-							</td>
-							<td>
-								Not particularly impressive visualization.
-							</td>
-						</tr>					
-					</table>
-					</div>
-				</td>				
-			</tr>
-			<tr>
-				<td bgcolor="#FFFFCC">
-					<div class="CSSTableGenerator" id="table3">
-					<table>
-						<tr>
-							<td colspan="3">Reviewer 1: <font color="orange"><b>92</b></font></td>
-						</tr>
-						<tr>
-							<td>
-							Data analysis (30%)
-							</td>
-							<td>
-								<input type="text" style="width: 50px;" id="da3" name="da3" value="" readonly="readonly">
-							</td>
-							<td>
-								Very comprehensive exploratory analysis. Good call on not modeling data yet. 
-							</td>
-						</tr>
-						<tr>
-							<td>Rationales of visualization design and story (30%)</td>
-							<td>
-							 	<input type="text" style="width: 50px;" id="ra3" name="ra3" readonly="readonly">
-							</td>
-							<td>
-								Reference to reviewer 2. 
-							</td>
-						</tr>
-						<tr>
-							<td>Visualization clarity (10%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="ca3" name="ca3" value="2" >
-							</td>
-							<td>
-								Clear icon key improves visualization clarity.
-							</td>
-						</tr>
-						<tr>
-							<td>Consistency (5%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="con3" name="con3" readonly="readonly">
-							</td>
-							<td>
-								
-							</td>
-						</tr>
-						<tr>
-							<td>Aesthetic (10%)</td>
-							<td>
-							<input type="text" style="width: 50px;" id="as3" name="as3" readonly="readonly">
-							</td>
-							<td>
-								
-							</td>
-						</tr>	
-						
-							<tr>
-							<td>Originality (15%)</td>
-							<td>
-								<input type="text" style="width: 50px;" id="org3" name="org3" readonly="readonly">
-							</td>
-							<td>
-								What would you do if bar charts are not allowed to use?
-							</td>
-						</tr>					
-					</table>
-					</div>
-				</td>
-				
-			</tr>
-		</table><br/>
+			
+		</table><br/>	
 		<table align="center"><tr><td>
-		<input type="submit" value="Submit" ><br/></td></tr>
+		<input style="width: 80px;" type="submit" value="Submit" onclick="return validate('${error}');"><br/></td></tr>
 		</table>
 </form>
 				

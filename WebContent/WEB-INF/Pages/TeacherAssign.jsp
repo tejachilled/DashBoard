@@ -25,7 +25,7 @@
 	background-color: black;
 	color: white;
 	clear: both;
-	position: absolute;
+	position: fixed;
 	text-align: center;
 	bottom: 0;
 	width: 100%;
@@ -78,16 +78,7 @@
 				alert('Please enter correct submission count number');
 				return false;
 			}
-		} /*
-		alert('coming');
-		alert(document.getElementById('one'));
-		var theTbl = document.getElementById('dataTable');
-		for(var i=0;i<theTbl.rows.length;i++){
-		        alert(theTbl.rows[i].cells[2].innerHTML) ; 
-		        alert(theTbl.rows[i].cells[2].innerText) ;		    
-		}
-		
-		return false; */
+		} 
 	}
 
 	function addRow(tableID) {
@@ -104,7 +95,7 @@
 		var cell3 = row.insertCell(2);
 		var element2 = document.createElement("input");
 		element2.type = "text";
-		var length = (table.rows.length) - 1; 
+		var length = (table.rows.length) - 1;
 		element2.id = "operationParameterses[" + length + "].criteria";
 		element2.name = "operationParameterses[" + length + "].criteria";
 		cell3.appendChild(element2);
@@ -137,15 +128,21 @@
 	}
 </script>
 <body>
-
+	<div id="header">
+		<h1>Peer Review Tool</h1>
+	</div>
+	<h4 align="right">user:
+			${teacher.username}
+			
+		<a href="/PeerTool/teacherfirst" > <img
+			src="${pageContext.request.contextPath}/resources/home.png"
+			width="30">
+		</a> <a href="/PeerTool/logout"> <img
+			src="${pageContext.request.contextPath}/resources/logout.png"
+			width="30">
+		</a>
+	</h4>
 	<form action="/PeerTool/submitReview" method="post">
-		<div id="header">
-			<h1>Peer Review Tool</h1>
-		</div>
-		<br />
-		<h4 align="right">user:
-			${teacher.username}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		</h4>
 		<input type="hidden" name="username" value="${teacher.username}">
 		<div id="section" align="center">
 			<h4 style="color: red" align="center">${customMsg}</h4>

@@ -29,8 +29,19 @@ function Validate(){
 	return true;
 }
 
+function Update(){
+	document.getElementById('update').value = 'update';
+	return true;
+}
+
 </script>
 <style>
+#login-box {
+	width: 300px;
+	padding: 20px;
+	background: #fff;
+	border: 1px solid #000;
+}
 #header {
 	background-color: black;
 	color: white;
@@ -44,10 +55,12 @@ function Validate(){
 	background-color: #d9edf7;
 }
 
-#footer {
+#footer {	
 	background-color: black;
 	color: white;
+	clear: both;
 	text-align: center;
+	position: fixed;
 	bottom: 0;
 	width: 100%;
 }
@@ -57,8 +70,34 @@ function Validate(){
 	<div id="header">
 		<h1>Peer Review Tool</h1>
 	</div>
+	<div align="right">
+		<a href="/PeerTool/teacherfirst"> <img src="${pageContext.request.contextPath}/resources/home.png" width="30"> </a>
+		<a href="/PeerTool/logout"> <img src="${pageContext.request.contextPath}/resources/logout.png" width="30"> </a>
+	</div>
+	<center>
+		<h4 align="center">Create multiple Groups:</h4>
+		<form action="/PeerTool/createmulgrpstuds" method="post"
+			enctype="multipart/form-data">
+			<h4 style="color: green;" align="center">${customMsgGrp}</h4>
+			<div id="login-box" align="left">
+				<span style="color: graytext;">Fields: UserId,New group name</span>
+				<input type="hidden" id="update" name="update">
+				<table>
+					<tr>
+						<td>Select File :</td>
+						<td><input type="file" name="filetoupload" align="middle">
+						</td>
+					</tr>
+					<tr align="center"> 
+					
+						<td><input align="middle" type="submit" value="Upload File" onclick="return Update();">
+						</td>
+					</tr>
+				</table>
+			</div>
+		</form>
+	<h4 align="center">Select students manually:</h4>
 	<form action="/PeerTool/saveNewGroup" method="post">
-		<br />
 		<div id="login-box">
 			<h4 style="color: red" align="center">${customMsg}</h4>
 			<table align="center">
@@ -70,7 +109,6 @@ function Validate(){
 				<tr>
 					<td>Select students from below: </td>
 				</tr>
-
 				<c:forEach items="${teacher.allStudents}" var="student">
 					<tr>
 						<td><input type="checkbox" value="${student.username}"
@@ -86,6 +124,7 @@ function Validate(){
 			</table>
 		</div>
 	</form>
+	</center>
 	<div id="footer">Copyright © Arizona State University</div>
 </body>
 </html>

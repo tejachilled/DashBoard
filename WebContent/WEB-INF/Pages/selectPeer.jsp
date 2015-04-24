@@ -28,7 +28,7 @@
 	color: white;
 	clear: both;
 	text-align: center;
-	position: absolute;
+	position: fixed;
 	bottom: 0;
 	width: 100%;
 }
@@ -56,88 +56,86 @@
 		<div id="header">
 			<h1>Peer Review Tool</h1>
 		</div>
-		
-		<div id="navleft">
-			
-		</div>
+		<div id="navleft"></div>
 		<div id="navright">
-			user: ${student.username}
-		</div><br/><br/>
-	<h3 align="center">Please select a peer to evaluate:</h3>
-		<div id="section">
-			<table align="center" border="1">
-				<tr>
-					<td></td>
-					<td>Students</td>
-					<td>Peer1</td>
-					<td>Peer2</td>
-					<td>Teacher</td>
-				</tr>
-				<c:set var="counter" value="1" />
-				<fmt:parseNumber var="counter2" value="0" />
-				<c:set var="bool" value="0"></c:set>
-				<c:forEach var="student" items="${student.peerList}"
-					varStatus="i">
-					<tr>
-						<td>${counter})</td>
-						<td><a href="/PeerTool/peerWork/${student.key}" name="stud"
-							id="vassignment">${student.key}</a></td>
-						<c:if test="${not empty student.value.marks}">
-							<c:choose>
-								<c:when test="${fn:length(student.value.marks) eq 3}">
-									<c:forEach var="list" items="${student.value.marks }">
-										<td><input type="radio" checked="checked"></td>
-									</c:forEach>
-								</c:when>
-								<c:when test="${fn:length(student.value.marks) eq 1}">
-									<c:forEach var="list" items="${student.value.marks }">
-										<c:if test="${list.teacher_evaluation == true }">
-											<td><input type="radio" readonly="readonly" disabled></td>
-											<td><input type="radio" readonly="readonly" disabled></td>
-											<td><input type="radio" checked="checked"></td>
-										</c:if>
-										<c:if test="${list.teacher_evaluation != true }">
-											<td><input type="radio" checked="checked"></td>
-											<td><input type="radio" readonly="readonly" disabled></td>
-											<td><input type="radio" readonly="readonly" disabled></td>
-										</c:if>
-									</c:forEach>
-								</c:when>
-								<c:when test="${fn:length(student.value.marks) eq 2}">
-									<c:forEach var="list" items="${student.value.marks }">
-										<c:if test="${list.teacher_evaluation == false }">
-											<td><input type="radio" checked="checked"></td>
-										</c:if>
-										<c:if test="${list.teacher_evaluation == true }">
-											<c:set var="bool" value="1"></c:set>
-										</c:if>
-									</c:forEach>
-									<c:if test="${bool == 1 }">
-										<td><input type="radio" readonly="readonly" disabled></td>
-										<td><input type="radio" checked="checked"></td>
-									</c:if>
-								</c:when>
-							</c:choose>
-
-
-						</c:if>
-						<c:if test="${ empty student.value.marks}">
-							<td><input type="radio" readonly="readonly" disabled>
-							</td>
-							<td><input type="radio" readonly="readonly" disabled></td>
-							<td><input type="radio" readonly="readonly" disabled>
-							</td>
-						</c:if>
-					</tr>
-					<c:set var="counter" value="${counter + 1}" />
-				</c:forEach>
-
-			</table>
-
+			user: ${student.username} <a href="/PeerTool/Welcome"> <img
+				src="${pageContext.request.contextPath}/resources/home.png"
+				width="30">
+			</a> <a href="/PeerTool/logout"> <img
+				src="${pageContext.request.contextPath}/resources/logout.png"
+				width="30">
+			</a>
 		</div>
+		<br /> <br />
+		<c:set var="size" value="${student.count }" />
+		<c:if test="${student.count eq 0}">
+			<h3 align="center">No peer submitted this assignment</h3>
+		</c:if>
+		<c:if test="${student.count gt 0}">
+			<h3 align="center">Please select a peer to evaluate:</h3>
+			<div id="section">
+				<table align="center" border="1">
+					<tr>
+						<td></td>
+						<td>Students</td>
+						<td>Your evaluation</td>
+						<c:forEach begin="2" end="${student.randomNumber}" varStatus="k">
+							<td>Peer evaluation</td>
+						</c:forEach>
+						<td>Teacher evaluation</td>
+					</tr>
+					<c:set var="counter" value="1" />
+					<c:forEach var="stu" items="${student.peerList}" varStatus="i">
+						<tr>
+							<td>${counter})</td>
+							<td>${stu.key}</td>
+							<c:if test="${ stu.value.teacherTotMarks gt 0}">
+								<c:if test="${not empty stu.value.reviewCriteria}">
+									<td><a href="/PeerTool/peerWork/${stu.key}" name="stud"
+										id="vassignment">${stu.value.studentTotMarks[0]}</a></td>
+								</c:if>
+								<c:if test="${ empty stu.value.reviewCriteria}">
+									<td><a href="/PeerTool/peerWork/${stu.key}" name="stud"
+										id="vassignment">N/A</a></td>
+								</c:if>
+								<c:forEach begin="1" end="${student.randomNumber - 1}"
+									varStatus="j">
+									<c:if test="${not empty stu.value.studentTotMarks[j.index]}">
+										<td>${stu.value.studentTotMarks[j.index]}</td>
+									</c:if>
+									<c:if test="${ empty stu.value.studentTotMarks[j.index]}">
+										<td>N/A</td>
+									</c:if>
 
+								</c:forEach>
+								<td>${ stu.value.teacherTotMarks}</td>
+							</c:if>
+							<c:if test="${ stu.value.teacherTotMarks eq 0}">
+								<c:if test="${not empty stu.value.reviewCriteria}">
+									<td><a href="/PeerTool/peerWork/${stu.key}" name="stud"
+										id="vassignment">${stu.value.studentTotMarks[0]}</a></td>
+								</c:if>
+								<c:if test="${ empty stu.value.reviewCriteria}">
+									<td><a href="/PeerTool/peerWork/${stu.key}" name="stud"
+										id="vassignment">N/A</a></td>
+								</c:if>
+								<c:forEach begin="1" end="${student.randomNumber - 1}"
+									varStatus="j">
+									<td>N/A</td>
+								</c:forEach>
+								<td>N/A</td>
+							</c:if>
+
+						</tr>
+						<c:set var="counter" value="${counter + 1}" />
+					</c:forEach>
+
+				</table>
+
+			</div>
+		</c:if>
 		<div id="footer">Copyright © Arizona State University</div>
-<input type="hidden" name = "peerObj" value="${peerObj}" />
+		<input type="hidden" name="peerObj" value="${peerObj}" />
 	</form>
 </body>
 </html>

@@ -35,7 +35,7 @@
 /*http://upload.wikimedia.org/wikipedia/commons/5/5b/Creete_background.jpg */
 body {
 	background-image:
-		url('http://collegium.eu/posebne-ponude/wp-content/uploads/2014/04/5.jpg');
+		url('${pageContext.request.contextPath}/resources/pic1.jpg');
 	background-size: cover;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -77,12 +77,6 @@ h1 {
 				</tr>
 			</table>
 		</form>
-		<table>
-			<tr>
-				<td>New user -</td>
-				<td><a href="/PeerTool/register">Register Here!</a></td>
-			</tr>
-		</table>
 	</div>
 
 </body>

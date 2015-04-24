@@ -25,11 +25,10 @@ charcount int,
 primary key(user_id,assignment_id,group_id)
 );
 
-
 create table peer_table(
-user_id varchar(20) NOT null, peer_id varchar(20) NOT NULL, count int DEFAULT 0, teacher_evaluation boolean DEFAULT false,
-analysis int,design int,vc int,consistency int,aesthetic int, orginality int, tot int,
-analysis_text varchar(200), design_text varchar(200),clarity_text varchar(200),aesthetic_text varchar(200),orginality_text varchar(200),tot_text varchar(200)
+user_id varchar(20) NOT null, reviewer_id varchar(20) NOT NULL, count int DEFAULT 0, teacher_evaluation boolean DEFAULT false,
+marks varchar(999), assignment_id int,
+group_id varchar(10)
 );
 
 drop table group_assign_review;
@@ -51,9 +50,12 @@ select * from user_table;
 
 select user_id,assignment_id,group_id,assignment_name,imagefile,NoofImages,content,link, 
 submissioncount,submissionDate,wordcount,charcount
-from user_assignment where  (user_id,submissionDate) in
-(select user_id,max(submissionDate) from user_assignment  group by user_id) and  submissionDate > '2015-02-09 13:37:26'
+from user_assignment where  user_id != 'manu' and assignment_id =3 and group_id = 'summer2015' and submissionDate > '2015-03-12 16:41:05'
 order by submissionDate asc limit 2;
 
 select distinct a.assignment_id  from group_assign_review a join user_assignment b where a.group_id = b.group_id and b.user_id ='1';
 
+set sql_safe_updates=0
+
+
+	

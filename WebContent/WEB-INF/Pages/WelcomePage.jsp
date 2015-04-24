@@ -28,10 +28,10 @@
 </script>
 <style>
 
-/*http://fc08.deviantart.net/fs24/f/2008/017/8/f/Library_page_background_by_WJD.jpg */
+/* http://svite-league-apps-content.s3.amazonaws.com/bgimages/wood.jpg */
 body {
 	background-image:
-		url('http://svite-league-apps-content.s3.amazonaws.com/bgimages/wood.jpg');
+		url('${pageContext.request.contextPath}/resources/peer1.jpg');
 	background-size: cover;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -43,19 +43,40 @@ body {
 h1 {
 	color: white;
 }
+#header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	width: 100%;
+	padding: 5px;
+}
+
+#section {
+	padding: 10px;
+	background-color: #d9edf7;
+}
+
+#footer {
+	background-color: black;
+	color: white;
+	text-align: center;
+	position: absolute; bottom : 0;
+	width: 100%;
+	bottom: 0;
+}
 </style>
 <body>
-	<br />
-	<br />
-
-	<h1 align="center">${headermsg}</h1>
-	<h1 align="right">
-		<img src="/WebContent/WEB-INF/images/home.png" width="30"
-			onclick="submit();" />&nbsp;<img src="view.png" width="30">&nbsp;<img
-			src="self.png" width="30">
-	</h1>
-	<h4 align="right">user:
-		${student.username}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<div id="header">
+		<h1>Peer Review Tool</h1>
+	</div>
+	<h4 align="right">
+		user: ${student.username} <a href="/PeerTool/Welcome"> <img
+			src="${pageContext.request.contextPath}/resources/home.png"
+			width="30">
+		</a> <a href="/PeerTool/logout"> <img
+			src="${pageContext.request.contextPath}/resources/logout.png"
+			width="30">
+		</a>
 	</h4>
 	<table align="center">
 		<tr>
@@ -64,21 +85,22 @@ h1 {
 		<tr>
 			<td>
 				<form action="/PeerTool/studentPage" method="post">
-					1)&nbsp;&nbsp;<input type="submit" value="Submit/View assignment">
+				 <input type="submit" value="Submit/View assignment">
 				</form>
 			</td>
 		</tr>
 		<tr>
 			<td>
 				<form action="/PeerTool/eassignment" method="post">
-					2)&nbsp;&nbsp;<input type="submit"
+					<input type="submit"
 						value="Evaluate peer's assignment">
 				</form>
 			</td>
 		</tr>
 	</table>
-
+ 
 	<br />
-	<h4 align="center">${uploadmsg}</h4>
+	<h4 align="center" style="color:aqua;">${uploadmsg}</h4>
+	<div id="footer">Copyright © Arizona State University</div>
 </body>
 </html>
